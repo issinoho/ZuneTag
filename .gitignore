@@ -1,0 +1,10 @@
+bin/
+obj/
+*.suo
+Thumbs.db
+*.pdb
+*vshost*
+*.exe
+*.dll
+*.manifest
+*.zip
