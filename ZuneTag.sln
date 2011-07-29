@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZuneTag", "ZuneTag.csproj", "{EB860912-217F-4898-992A-131AB7D3BC5E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedWMFSDKWrapper", "WMFSDKWrapper\ManagedWMFSDKWrapper.csproj", "{655F362E-A35B-4143-80F0-312A6B9C57E5}"

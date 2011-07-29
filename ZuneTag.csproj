@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,11 +10,19 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DrunkenBakery.ZuneTag</RootNamespace>
     <AssemblyName>ZuneTag</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ApplicationIcon>comment_rect.ico</ApplicationIcon>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>Cygnet.snk</AssemblyOriginatorKeyFile>
+    <IsWebBootstrapper>true</IsWebBootstrapper>
+    <TargetZone>LocalIntranet</TargetZone>
+    <GenerateManifests>false</GenerateManifests>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>3.5</OldToolsVersion>
     <PublishUrl>http://localhost/ZuneTag/</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
@@ -27,11 +35,9 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetZone>LocalIntranet</TargetZone>
-    <GenerateManifests>false</GenerateManifests>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -85,13 +91,12 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Interop.DexterLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=59345589f61c4f31, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Scratch\FrameGrabber\bin\Release\Interop.DexterLib.dll</HintPath>
+    <Reference Include="Interop.DexterLib">
+      <HintPath>FrameGrabber\Interop.DexterLib.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="JockerSoft.Media, Version=1.0.0.1, Culture=neutral, PublicKeyToken=59345589f61c4f31, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Scratch\FrameGrabber\bin\Release\JockerSoft.Media.dll</HintPath>
+    <Reference Include="JockerSoft.Media">
+      <HintPath>FrameGrabber\JockerSoft.Media.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -117,9 +122,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="WMFSDKWrapper, Version=0.0.0.0, Culture=neutral, PublicKeyToken=ba7d923d3001e68e, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>WMFSDKWrapper\bin\x86\Release\WMFSDKWrapper.dll</HintPath>
+    <Reference Include="WMFSDKWrapper">
+      <HintPath>WMFSDKWrapper\bin\Release\WMFSDKWrapper.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +184,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.config" />
     <None Include="Cygnet.snk" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -287,7 +292,7 @@
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
-      <ProductName>.NET Framework Client Profile</ProductName>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
