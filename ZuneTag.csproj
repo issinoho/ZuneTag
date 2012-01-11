@@ -91,12 +91,8 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Interop.DexterLib">
-      <HintPath>FrameGrabber\Interop.DexterLib.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="JockerSoft.Media">
-      <HintPath>FrameGrabber\JockerSoft.Media.dll</HintPath>
+      <HintPath>libs\JockerSoft.Media.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
