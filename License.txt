@@ -1,5 +1,0 @@
-First and foremost, ZuneTag is a freeware tool. You cannot bundle it with your own commercial application and you cannot sell it in any way, shape or form. 
-
-As an individual, you're allowed to use it anywhere you like - be it at home or at work (assuming they don't mind of course!). 
-
-I'm not against it being rolled out in a corporate environment, just make sure the users know they are supposed to contact you with any support type issues and not me - I'm not an extension of your helpdesk!

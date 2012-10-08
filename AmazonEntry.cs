@@ -1,110 +1,144 @@
-﻿//------------------------------------------------------------------
-// Zune Meta Tag Editor
-// Amazon Entry Class
-//
-// <copyright file="AmazonEntry.cs" company="The Drunken Bakery">
-//     Copyright (c) 2009 The Drunken Bakery. All rights reserved.
-// </copyright>
-//
-// Editor to update WMV meta tags for the Zune
-// Holds search entry from Amazon.
-//
-// Author: IRS
-// $Revision: 1.2 $
-//------------------------------------------------------------------using System;
-
+﻿// ------------------------------------------------------------------
+//  DrunkenBakery Zune Tag
+//  ZuneTag.ZuneTag
+// 
+//  <copyright file="AmazonEntry.cs" company="The Drunken Bakery">
+//      Copyright (c) 2009-2012 The Drunken Bakery. All rights reserved.
+//  </copyright>
+// 
+//  Author: IRS
+// ------------------------------------------------------------------
 namespace DrunkenBakery.ZuneTag
 {
-    class AmazonEntry
+    /// <summary>
+    /// The amazon entry.
+    /// </summary>
+    internal class AmazonEntry
     {
-        string _asin;
-        string _title;
-        string _director;
-        string _year;
-        string _date;
-        string _genre;
-        string _rating;
-        string _description;
-        string _URL;
-        string _cover;
+        #region Constructors and Destructors
 
-        public AmazonEntry(string _asin, string _title, string _director, string _date, string _description, string _URL, string _genre, string _rating, string _cover)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AmazonEntry"/> class.
+        /// </summary>
+        /// <param name="asin">
+        /// The _asin.
+        /// </param>
+        /// <param name="title">
+        /// The _title.
+        /// </param>
+        /// <param name="director">
+        /// The _director.
+        /// </param>
+        /// <param name="date">
+        /// The _date.
+        /// </param>
+        /// <param name="description">
+        /// The _description.
+        /// </param>
+        /// <param name="url">
+        /// The _ url.
+        /// </param>
+        /// <param name="genre">
+        /// The _genre.
+        /// </param>
+        /// <param name="rating">
+        /// The _rating.
+        /// </param>
+        /// <param name="cover">
+        /// The _cover.
+        /// </param>
+        public AmazonEntry(
+            string asin, 
+            string title, 
+            string director, 
+            string date, 
+            string description, 
+            string url, 
+            string genre, 
+            string rating, 
+            string cover)
         {
-            this._asin = _asin;
-            this._title = _title;
-            this._director = _director;
-            this._date = _date;
-            this._year = _date.Length >= 4 ? _date.Substring(0,4) : "";
-            this._description = _description;
-            this._URL = _URL;
-            this._genre = _genre;
-            this._rating = _rating;
-            this._cover = _cover;
+            this.Asin = asin;
+            this.Title = title;
+            this.Director = director;
+            this.Date = date;
+            this.Year = date.Length >= 4 ? date.Substring(0, 4) : string.Empty;
+            this.Description = description;
+            this.Url = url;
+            this.Genre = genre;
+            this.Rating = rating;
+            this.Cover = cover;
         }
 
-        public string Cover
-        {
-            get { return _cover; }
-            set { _cover = value; }
-        }
+        #endregion
 
-        public string ASIN
-        {
-            get { return _asin; }
-            set { _asin = value; }
-        }
+        #region Public Properties
 
-        public string Title
-        {
-            get { return _title; }
-            set { _title = value; }
-        }
+        /// <summary>
+        /// Gets or sets the asin.
+        /// </summary>
+        public string Asin { get; set; }
 
-        public string Director
-        {
-            get { return _director; }
-            set { _director = value; }
-        }
+        /// <summary>
+        /// Gets or sets the cover.
+        /// </summary>
+        public string Cover { get; set; }
 
-        public string Year
-        {
-            get { return _year; }
-            set { _year = value; }
-        }
+        /// <summary>
+        /// Gets or sets the date.
+        /// </summary>
+        public string Date { get; set; }
 
-        public string Date
-        {
-            get { return _date; }
-            set { _date = value; }
-        }
+        /// <summary>
+        /// Gets or sets the description.
+        /// </summary>
+        public string Description { get; set; }
 
-        public string Description
-        {
-            get { return _description; }
-            set { _description = value; }
-        }
+        /// <summary>
+        /// Gets or sets the director.
+        /// </summary>
+        public string Director { get; set; }
 
-        public string URL
-        {
-            get { return _URL; }
-            set { _URL = value; }
-        }
+        /// <summary>
+        /// Gets or sets the genre.
+        /// </summary>
+        public string Genre { get; set; }
 
-        public string Genre
-        {
-            get { return _genre; }
-            set { _genre = value; }
-        }
+        /// <summary>
+        /// Gets or sets the rating.
+        /// </summary>
+        public string Rating { get; set; }
 
-        public string Rating
-        {
-            get { return _rating; }
-            set { _rating = value; }
-        }
+        /// <summary>
+        /// Gets or sets the title.
+        /// </summary>
+        public string Title { get; set; }
 
+        /// <summary>
+        /// Gets or sets the url.
+        /// </summary>
+        public string Url { get; set; }
+
+        /// <summary>
+        /// Gets or sets the year.
+        /// </summary>
+        public string Year { get; set; }
+
+        #endregion
+
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The to string.
+        /// </summary>
+        /// <returns>
+        /// The <see cref="string"/>.
+        /// </returns>
         public override string ToString()
         {
             return this.Title;
         }
+
+        #endregion
     }
 }
