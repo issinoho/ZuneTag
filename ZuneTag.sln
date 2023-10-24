@@ -1,7 +1,12 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZuneTag", "ZuneTag.csproj", "{EB860912-217F-4898-992A-131AB7D3BC5E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{655F362E-A35B-4143-80F0-312A6B9C57E5} = {655F362E-A35B-4143-80F0-312A6B9C57E5}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagedWMFSDKWrapper", "WMFSDKWrapper\ManagedWMFSDKWrapper.csproj", "{655F362E-A35B-4143-80F0-312A6B9C57E5}"
 EndProject
@@ -42,5 +47,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77BB87E5-9843-40B4-8588-6AEBCE510274}
 	EndGlobalSection
 EndGlobal

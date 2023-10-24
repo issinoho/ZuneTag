@@ -118,6 +118,7 @@
             this.label25 = new System.Windows.Forms.Label();
             this.txtMusicTitle = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.cmdReset = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.txtNewValue = new System.Windows.Forms.TextBox();
             this.cmdModify = new System.Windows.Forms.Button();
@@ -148,7 +149,6 @@
             this.lvStatus = new System.Windows.Forms.ListView();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.cmdReset = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.toolTip2 = new System.Windows.Forms.ToolTip(this.components);
             this.toolTip3 = new System.Windows.Forms.ToolTip(this.components);
@@ -253,14 +253,14 @@
             this.exitToolStripMenuItem1});
             this.fileToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("fileToolStripMenuItem.Image")));
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(51, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // exitToolStripMenuItem1
             // 
             this.exitToolStripMenuItem1.Image = ((System.Drawing.Image)(resources.GetObject("exitToolStripMenuItem1.Image")));
             this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
-            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(103, 22);
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(93, 22);
             this.exitToolStripMenuItem1.Text = "Exit";
             this.exitToolStripMenuItem1.Click += new System.EventHandler(this.exitToolStripMenuItem1_Click);
             // 
@@ -272,14 +272,14 @@
             this.systemInformationToolStripMenuItem});
             this.toolsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("toolsToolStripMenuItem.Image")));
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
             // 
             // nETVersionsToolStripMenuItem
             // 
             this.nETVersionsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("nETVersionsToolStripMenuItem.Image")));
             this.nETVersionsToolStripMenuItem.Name = "nETVersionsToolStripMenuItem";
-            this.nETVersionsToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.nETVersionsToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.nETVersionsToolStripMenuItem.Text = ".NET Versions";
             this.nETVersionsToolStripMenuItem.Click += new System.EventHandler(this.nETVersionsToolStripMenuItem_Click);
             // 
@@ -287,7 +287,7 @@
             // 
             this.mDACVersionsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("mDACVersionsToolStripMenuItem.Image")));
             this.mDACVersionsToolStripMenuItem.Name = "mDACVersionsToolStripMenuItem";
-            this.mDACVersionsToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.mDACVersionsToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.mDACVersionsToolStripMenuItem.Text = "MDAC Versions";
             this.mDACVersionsToolStripMenuItem.Click += new System.EventHandler(this.mDACVersionsToolStripMenuItem_Click);
             // 
@@ -295,7 +295,7 @@
             // 
             this.systemInformationToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("systemInformationToolStripMenuItem.Image")));
             this.systemInformationToolStripMenuItem.Name = "systemInformationToolStripMenuItem";
-            this.systemInformationToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.systemInformationToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.systemInformationToolStripMenuItem.Text = "System Information";
             this.systemInformationToolStripMenuItem.Click += new System.EventHandler(this.systemInformationToolStripMenuItem_Click);
             // 
@@ -305,14 +305,14 @@
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("helpToolStripMenuItem.Image")));
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(56, 20);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("aboutToolStripMenuItem.Image")));
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -350,6 +350,7 @@
             this.pictureBox1.Location = new System.Drawing.Point(312, 121);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(296, 196);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 45;
             this.pictureBox1.TabStop = false;
             // 
@@ -1017,6 +1018,18 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Attributes";
             // 
+            // cmdReset
+            // 
+            this.cmdReset.Image = ((System.Drawing.Image)(resources.GetObject("cmdReset.Image")));
+            this.cmdReset.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.cmdReset.Location = new System.Drawing.Point(15, 73);
+            this.cmdReset.Name = "cmdReset";
+            this.cmdReset.Size = new System.Drawing.Size(75, 23);
+            this.cmdReset.TabIndex = 40;
+            this.cmdReset.Text = "   Reset";
+            this.cmdReset.UseVisualStyleBackColor = true;
+            this.cmdReset.Click += new System.EventHandler(this.cmdReset_Click);
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -1309,6 +1322,7 @@
             // lvStatus
             // 
             this.lvStatus.GridLines = true;
+            this.lvStatus.HideSelection = false;
             this.lvStatus.Location = new System.Drawing.Point(6, 6);
             this.lvStatus.Name = "lvStatus";
             this.lvStatus.Size = new System.Drawing.Size(602, 314);
@@ -1330,18 +1344,6 @@
             // 
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
-            // 
-            // cmdReset
-            // 
-            this.cmdReset.Image = ((System.Drawing.Image)(resources.GetObject("cmdReset.Image")));
-            this.cmdReset.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.cmdReset.Location = new System.Drawing.Point(15, 73);
-            this.cmdReset.Name = "cmdReset";
-            this.cmdReset.Size = new System.Drawing.Size(75, 23);
-            this.cmdReset.TabIndex = 40;
-            this.cmdReset.Text = "   Reset";
-            this.cmdReset.UseVisualStyleBackColor = true;
-            this.cmdReset.Click += new System.EventHandler(this.cmdReset_Click);
             // 
             // Form1
             // 

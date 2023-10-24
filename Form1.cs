@@ -25,7 +25,9 @@ namespace DrunkenBakery.ZuneTag
     using System.ServiceModel;
     using System.Windows.Forms;
     using Amazon.ECS;
-    using JockerSoft.Media;
+    using MediaToolkit.Model;
+    using MediaToolkit.Options;
+    using MediaToolkit;
     using WMFSDKWrapper;
 
     /// <summary>
@@ -294,22 +296,17 @@ namespace DrunkenBakery.ZuneTag
             }
             else
             {
+                var tempFilePath = AppContext.BaseDirectory + "temp.jpg";
+                var outputFile = new MediaFile { Filename = tempFilePath };
+                var inputFile = new MediaFile { Filename = lblMediaFile.Text };
+
                 // Grab still frame, if possible
-                try
+                using (var engine = new Engine())
                 {
-                    Size size = new Size();
-                    size.Height = pictureBox1.Height;
-                    size.Width = pictureBox1.Width;
-                    this.pictureBox1.Image = FrameGrabber.GetFrameFromVideo(lblMediaFile.Text, 0.2d, size);
-                    SetImage(pictureBox1);
-                }
-                catch (InvalidVideoFileException ex)
-                {
-                    AddLogEntry(ex.Message, LogType.Fail);
-                }
-                catch (StackOverflowException)
-                {
-                    AddLogEntry("The target image size is too big", LogType.Fail);
+                    engine.GetMetadata(inputFile);
+                    var options = new ConversionOptions { Seek = TimeSpan.FromSeconds(5) };
+                    engine.GetThumbnail(inputFile, outputFile, options);
+                    pictureBox1.Load(tempFilePath);
                 }
 
                 // Make sure all supported attributes are defined
@@ -373,44 +370,6 @@ namespace DrunkenBakery.ZuneTag
 
             //return the new image dimensions
             return new Size((int)(currW * multiplier), (int)(currH * multiplier));
-        }
-
-        /// <summary>
-        /// Sets the image.
-        /// </summary>
-        /// <param name="pb">The pb.</param>
-        private void SetImage(PictureBox pb)
-        {
-            try
-            {
-                //create a temp image
-                System.Drawing.Image img = pb.Image;
-
-                //calculate the size of the image
-                Size imgSize = GenerateImageDimensions(img.Width, img.Height, this.pictureBox1.Width, this.pictureBox1.Height);
-
-                //create a new Bitmap with the proper dimensions
-                Bitmap finalImg = new Bitmap(img, imgSize.Width, imgSize.Height);
-
-                //create a new Graphics object from the image
-                Graphics gfx = Graphics.FromImage(img);
-
-                //clean up the image (take care of any image loss from resizing)
-                gfx.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
-                //empty the PictureBox
-                pb.Image = null;
-
-                //center the new image
-                pb.SizeMode = PictureBoxSizeMode.CenterImage;
-
-                //set the new image
-                pb.Image = finalImg;
-            }
-            catch (System.Exception e)
-            {
-                MessageBox.Show(e.Message);
-            }
         }
 
         /// <summary>
