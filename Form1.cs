@@ -31,6 +31,7 @@ namespace DrunkenBakery.ZuneTag
     using TMDbLib.Objects.Search;
     using TMDbLib.Objects.Movies;
     using System.Web.UI;
+    using System.Runtime.InteropServices.ComTypes;
 
     /// <summary>
     /// Main application form which drives all functionality.
@@ -298,8 +299,12 @@ namespace DrunkenBakery.ZuneTag
                     engine.GetMetadata(inputFile);
                     var options = new ConversionOptions { Seek = TimeSpan.FromSeconds(5) };
                     engine.GetThumbnail(inputFile, outputFile, options);
-                    pictureBox1.Load(tempFilePath);
                 }
+
+                // Load frame into PB
+                FileStream fs = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read);
+                pictureBox1.Image = Image.FromStream(fs);
+                fs.Close();
 
                 // Make sure all supported attributes are defined
                 AddMissingAttributes();
