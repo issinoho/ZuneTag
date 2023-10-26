@@ -18,32 +18,31 @@ namespace DrunkenBakery.ZuneTag
     using System;
     using System.Collections.Generic;
     using System.Drawing;
-    using System.Drawing.Drawing2D;
     using System.IO;
     using System.Net;
     using System.Runtime.InteropServices;
-    using System.ServiceModel;
     using System.Windows.Forms;
-    using Amazon.ECS;
     using MediaToolkit.Model;
     using MediaToolkit.Options;
     using MediaToolkit;
     using WMFSDKWrapper;
+    using TMDbLib.Client;
+    using TMDbLib.Objects.General;
+    using TMDbLib.Objects.Search;
+    using TMDbLib.Objects.Movies;
+    using System.Web.UI;
 
     /// <summary>
     /// Main application form which drives all functionality.
     /// </summary>
     public partial class Form1 : Form
     {
-        #region Enums
         /// <summary>
         /// Severity of logging entry
         /// </summary>
         private enum LogType { Success, Fail, Info }
         private enum MediaType {Unknown, Video, Movie, Music, TV}
-        #endregion
 
-        #region Constants
         const int ScreenRefresh = 1;
         const int ScreenLines = 1000;
         const string ThisApp = "Zune Tag Editor";
@@ -55,11 +54,7 @@ namespace DrunkenBakery.ZuneTag
         const string TypeMovie = "C9-7F-B8-A9-47-BD-F0-4B-AC-4F-65-5B-89-F7-D8-68";
         const string TypeMusic = "E2-89-E6-E3-8C-BA-30-43-96-DF-A0-EE-EF-FA-68-76";
         const string TypeTV = "8A-25-7F-BA-F7-62-A9-47-B2-1F-46-51-C4-2A-00-0E";
-        const string AmazonID = "AKIAI344DCI3P6HJXGOA";
-        const string AmazonKey = "dM23mxiQzaMEy0O2I1qIacqJijV/JyqIlFRgTP+Y";
-        #endregion
 
-        #region Class Variables
         private Form frmNET;
         private Form frmMDAC;
         private Form frmInfo;
@@ -70,9 +65,6 @@ namespace DrunkenBakery.ZuneTag
         List<Attribute> _attributes = new List<Attribute>();
         private ushort indexPrimaryVideo;
         private ushort indexSecondaryVideo;
-        private int pageNumber = 0;
-        private int safePageNumber = 0;
-        #endregion
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Form1"/> class.
@@ -104,7 +96,7 @@ namespace DrunkenBakery.ZuneTag
             toolTip6.SetToolTip(cmdVideoSave, "Update Video with these tags");
             toolTip7.SetToolTip(cmdReset, "Hard reset the video type attributes");
             toolTip8.SetToolTip(cmdCopyAz, "Copy the tags back ready for saving");
-            toolTip9.SetToolTip(cmdAmazonSearch, "Search Amazon for videos that match");
+            toolTip9.SetToolTip(cmdAmazonSearch, "Search TMDB for videos that match");
             toolTip10.SetToolTip(cmdBrowse, "Open a WMV media file");
 
             // Initialise Event Views
@@ -1337,7 +1329,7 @@ namespace DrunkenBakery.ZuneTag
                 WMFSDKFunctions.WMCreateEditor(out MetadataEditor);
                 MetadataEditor.Open(lblMediaFile.Text);
                 HeaderInfo3 = (IWMHeaderInfo3)MetadataEditor;
-                HeaderInfo3.SetPicAttribute(0, "WM/Picture", WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, pictureParam, (ushort)Marshal.SizeOf(picture));
+                //HeaderInfo3.SetPicAttribute(0, "WM/Picture", WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, pictureParam, (ushort)Marshal.SizeOf(picture));
                 MetadataEditor.Flush();
                 MetadataEditor.Close();
             }
@@ -1590,7 +1582,7 @@ namespace DrunkenBakery.ZuneTag
             EditAttribute("WM/TVNetworkAffiliation", txtTVNetwork.Text);
             EditAttribute("WM/Genre", txtTVGenre.Text);
             EditAttribute("WM/TrackNumber", txtTVTrack.Text);
-            //EditPicture(pictureBox1);
+            EditPicture(pictureBox1);
 
             AddLogEntry(lblMediaFile.Text + " successfully modified", LogType.Success);
             InspectFile();
@@ -1627,7 +1619,7 @@ namespace DrunkenBakery.ZuneTag
             EditAttribute("WM/OriginalBroadcastDateTime", txtMovieDate.Text);
             EditAttribute("WM/ParentalRating", txtMovieRating.Text);
             EditAttribute("WM/Genre", txtMovieGenre.Text);
-            //EditPicture(pictureBox1);
+            EditPicture(pictureBox1);
 
             AddLogEntry(lblMediaFile.Text + " successfully modified", LogType.Success);
             InspectFile();
@@ -1647,7 +1639,7 @@ namespace DrunkenBakery.ZuneTag
             EditAttribute("WM/OriginalBroadcastDateTime", txtMusicDate.Text);
             EditAttribute("WM/ParentalRating", txtMusicRating.Text);
             EditAttribute("WM/Genre", txtMusicGenre.Text);
-            //EditPicture(pictureBox1);
+            EditPicture(pictureBox1);
 
             AddLogEntry(lblMediaFile.Text + " successfully modified", LogType.Success);
             InspectFile();
@@ -1665,7 +1657,7 @@ namespace DrunkenBakery.ZuneTag
             EditAttribute("Author", txtVideoAuthor.Text);
             EditAttribute("WM/Year", txtVideoYear.Text);
             EditAttribute("WM/Genre", txtVideoGenre.Text);
-            //EditPicture(pictureBox1);
+            EditPicture(pictureBox1);
 
             AddLogEntry(lblMediaFile.Text + " successfully modified", LogType.Success);
             InspectFile();
@@ -1678,20 +1670,12 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void cmdAmazonSearch_Click(object sender, EventArgs e)
         {
-            pageNumber = 1;
-            AmazonSearch();
-        }
-
-        /// <summary>
-        /// Amazons the search.
-        /// </summary>
-        private void AmazonSearch()
-        {
             // Set up visuals pre-search
-            AddLogEntry("Searching Amazon for " + txtSearchCriteria.Text + "...", LogType.Info);
+            lbResults.Items.Clear();
             SetButtons(false);
             progressBar1.Visible = true;
             this.Cursor = Cursors.WaitCursor;
+            AddLogEntry("Searching TMDB for " + txtSearchCriteria.Text + "...", LogType.Info);
             Application.DoEvents();
 
             // Do the search
@@ -1705,102 +1689,6 @@ namespace DrunkenBakery.ZuneTag
         private void SetButtons(bool isON)
         {
             cmdAmazonSearch.Enabled = isON;
-            cmdNext.Enabled = isON;
-            cmdPrev.Enabled = isON;
-        }
-
-        /// <summary>
-        /// Performs the search.
-        /// </summary>
-        private void PerformSearch()
-        {
-            if (txtSearchCriteria.Text.Length == 0)
-            {
-                return;
-            }
-
-            try
-            {
-                // create a WCF Amazon ECS client
-                BasicHttpBinding basicBinding = new BasicHttpBinding(BasicHttpSecurityMode.Transport);
-                basicBinding.MaxReceivedMessageSize = 2147483647;
-                basicBinding.ReaderQuotas.MaxStringContentLength = int.MaxValue;
-                AWSECommerceServicePortTypeClient client = new AWSECommerceServicePortTypeClient(
-                    basicBinding,
-                    new EndpointAddress("https://webservices.amazon.com/onca/soap?Service=AWSECommerceService"));
-
-                // add authentication to the ECS client  
-                client.ChannelFactory.Endpoint.Behaviors.Add(new AmazonSigningEndpointBehavior(AmazonID, AmazonKey));
-
-                ItemSearchRequest request = new ItemSearchRequest();
-                request.Availability = ItemSearchRequestAvailability.Available;
-                request.Condition = Condition.All;
-                request.ItemPage = pageNumber.ToString();
-                request.MerchantId = "Amazon";
-                request.ResponseGroup = new string[] { "Medium", "Reviews", "ItemAttributes", "BrowseNodes" };
-                request.SearchIndex = "DVD";
-                request.Title = txtSearchCriteria.Text;
-
-                ItemSearch itemSearch = new ItemSearch();
-                itemSearch.Request = new ItemSearchRequest[] { request };
-                itemSearch.AWSAccessKeyId = AmazonID;
-                ItemSearchResponse response = client.ItemSearch(itemSearch);
-
-                if (response.Items[0].Item != null)
-                {
-                    lbResults.Items.Clear();
-                    foreach (Items resultItem in response.Items)
-                    {
-                        foreach (Item displayItem in resultItem.Item)
-                        {
-                            ItemAttributes item = displayItem.ItemAttributes;
-
-                            // Work out which review (if any) we can use
-                            string myReview;
-                            if (displayItem.EditorialReviews == null)
-                            {
-                                if (displayItem.CustomerReviews == null)
-                                {
-                                    myReview = "";
-                                }
-                                else
-                                {
-                                    myReview = orNull(displayItem.CustomerReviews.Review[0].Content);
-                                }
-                            }
-                            else
-                            {
-                                myReview = orNull(displayItem.EditorialReviews[0].Content);
-                            }
-
-                            AmazonEntry _entry = new AmazonEntry(
-                                    orNull(displayItem.ASIN),
-                                    orNull(item.Title),
-                                    item.Director == null ? "" : orNull(item.Director[0]),
-                                    orNull(item.TheatricalReleaseDate),
-                                    myReview,
-                                    orNull(displayItem.DetailPageURL),
-                                    orNull(GetGenre(displayItem)),
-                                    orNull(item.AudienceRating),
-                                    displayItem.MediumImage == null ? "" : orNull(displayItem.MediumImage.URL));
-                            lbResults.Items.Add(_entry);
-                        }
-                    }
-                    lblPage.Text = "Page " + pageNumber.ToString();
-                    safePageNumber = pageNumber;
-                }
-                else
-                {
-                    pageNumber = safePageNumber;
-                }
-
-                AddLogEntry("Search Complete", LogType.Info);
-            }
-            catch (Exception ex)
-            {
-                pageNumber = safePageNumber;
-                AddLogEntry(ex.Message, LogType.Fail);
-            }
         }
 
         /// <summary>
@@ -1809,52 +1697,14 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="item">The item.</param>
         private void ShowCoverArt(string coverUrl)
         {
-            if (coverUrl != "")
+            if (coverUrl != "" && coverUrl != null)
             {
                 WebClient client = new WebClient();
                 client.Headers["User-Agent"] = "Mozilla/4.0";
-                byte[] bytes = client.DownloadData(coverUrl);
+                byte[] bytes = client.DownloadData(Properties.Settings.Default.PosterBase + coverUrl);
                 MemoryStream stream = new MemoryStream(bytes);
                 pbCover.Image = System.Drawing.Image.FromStream(stream);
             }
-        }
-
-        /// <summary>
-        /// Gets the genre.
-        /// </summary>
-        /// <param name="item">The item.</param>
-        /// <returns></returns>
-        static string GetGenre(Item item)
-        {
-            if (item.BrowseNodes == null) return null;
-            string genre = string.Empty;
-            foreach (BrowseNode node in item.BrowseNodes.BrowseNode)
-            {
-                if (node.Name.ToLower() == "general")
-                    if (node.Ancestors != null)
-                        return node.Ancestors[0].Name;
-            }
-            return "<unspecified>";
-        }
-
-        /// <summary>
-        /// Ors the null.
-        /// </summary>
-        /// <param name="inputString">The input string.</param>
-        /// <returns></returns>
-        private string orNull(string inputString)
-        {
-            return (string.IsNullOrEmpty(inputString) ? "" : inputString);
-        }
-
-        /// <summary>
-        /// Handles the TextChanged event of the txtSearchCriteria control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void txtSearchCriteria_TextChanged(object sender, EventArgs e)
-        {
-            pageNumber = 0;
         }
 
         /// <summary>
@@ -1877,34 +1727,53 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void lbResults_SelectedIndexChanged(object sender, EventArgs e)
         {
-            AmazonEntry _entry = (AmazonEntry)lbResults.SelectedItem;
-            if (_entry != null)
+            AmazonEntry entry = (AmazonEntry)lbResults.SelectedItem;
+            if (entry == null)
             {
-                txtAzTitle.Text = _entry.Title;
-                txtAzYear.Text = _entry.Year;
-                txtAzDirector.Text = _entry.Director;
-                txtAzDescription.Text = _entry.Description;
-                ShowCoverArt(_entry.Cover);
+                return;
             }
-        }
 
-        /// <summary>
-        /// Handles the DoubleClick event of the lbResults control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void lbResults_DoubleClick(object sender, EventArgs e)
-        {
-            if (lbResults.SelectedItem == null) return;
-
-            AmazonEntry _entry = (AmazonEntry)lbResults.SelectedItem;
-            if (_entry != null)
+            // If not already retrieved, get additional data
+            if (!entry.extraData)
             {
-                if (_entry.URL.Length > 0)
+                TMDbClient client = new TMDbClient(Properties.Settings.Default.APIkey);
+                Movie movie = client.GetMovieAsync(entry.movie.Id).Result;
+                if (movie != null)
                 {
-                    System.Diagnostics.Process.Start(_entry.URL);
+                    entry.Genre = movie.Genres[0].Name ?? "unknown";
+                    entry.URL = movie.Homepage;
                 }
+
+                Credits credits = client.GetMovieCreditsAsync(entry.movie.Id).Result;
+                if (credits != null)
+                {
+                    foreach (var credit in credits.Crew)
+                    {
+                        if (credit.Department == "Directing")
+                        {
+                            entry.Director = credit.Name;
+                            break;
+                        }
+                    }
+                }
+
+
+                entry.extraData = true;
             }
+
+            txtAzTitle.Text = entry.movie.Title;
+            if (entry.movie.ReleaseDate != null)
+            {
+                txtAzYear.Text = entry.movie.ReleaseDate.Value.Year.ToString();
+            }
+            else
+            {
+                txtAzYear.Text = "unknown";
+            }
+
+            txtAzDirector.Text = entry.Director;
+            txtAzDescription.Text = entry.movie.Overview;
+            ShowCoverArt(entry.movie.PosterPath);
         }
 
         /// <summary>
@@ -1926,45 +1795,45 @@ namespace DrunkenBakery.ZuneTag
                         break;
 
                     case 1:
-                        AddLogEntry("Copying details to current media file");
+                        AddLogEntry("Copying details to current media file...", LogType.Info);
                         txtVideoAuthor.Text = _entry.Director;
-                        txtVideoDescription.Text = _entry.Description;
+                        txtVideoDescription.Text = _entry.movie.Overview;
                         txtVideoGenre.Text = _entry.Genre;
-                        txtVideoTitle.Text = _entry.Title;
-                        txtVideoYear.Text = _entry.Year;
+                        txtVideoTitle.Text = _entry.movie.Title;
+                        txtVideoYear.Text = _entry.movie.ReleaseDate.Value.Year.ToString();
                         break;
 
                     case 2:
-                        AddLogEntry("Copying details to current media file");
+                        AddLogEntry("Copying details to current media file...", LogType.Info);
                         txtMovieAuthor.Text = _entry.Director;
-                        txtMovieDate.Text = _entry.Date;
-                        txtMovieDescription.Text = _entry.Description;
+                        txtMovieDate.Text = _entry.movie.ReleaseDate.Value.Date.ToString();
+                        txtMovieDescription.Text = _entry.movie.Overview;
                         txtMovieGenre.Text = _entry.Genre;
-                        txtMovieRating.Text = _entry.Rating;
-                        txtMovieTitle.Text = _entry.Title;
-                        txtMovieYear.Text = _entry.Year;
+                        txtMovieRating.Text = _entry.movie.VoteAverage.ToString();
+                        txtMovieTitle.Text = _entry.movie.Title;
+                        txtMovieYear.Text = _entry.movie.ReleaseDate.Value.Year.ToString();
                         break;
 
                     case 3:
-                        AddLogEntry("Copying details to current media file");
+                        AddLogEntry("Copying details to current media file...", LogType.Info);
                         txtMusicAuthor.Text = _entry.Director;
-                        txtMusicDate.Text = _entry.Date;
-                        txtMusicDescription.Text = _entry.Description;
+                        txtMusicDate.Text = _entry.movie.ReleaseDate.Value.Date.ToString();
+                        txtMusicDescription.Text = _entry.movie.Overview;
                         txtMusicGenre.Text = _entry.Genre;
-                        txtMusicRating.Text = _entry.Rating;
-                        txtMusicTitle.Text = _entry.Title;
-                        txtMusicYear.Text = _entry.Year;
+                        txtMusicRating.Text = _entry.movie.VoteAverage.ToString();
+                        txtMusicTitle.Text = _entry.movie.Title;
+                        txtMusicYear.Text = _entry.movie.ReleaseDate.Value.Year.ToString();
                         break;
 
                     case 4:
-                        AddLogEntry("Copying details to current media file");
+                        AddLogEntry("Copying details to current media file...", LogType.Info);
                         txtTVAuthor.Text = _entry.Director;
-                        txtTVDate.Text = _entry.Date;
-                        txtTVDescription.Text = _entry.Description;
+                        txtTVDate.Text = _entry.movie.ReleaseDate.Value.Date.ToString();
+                        txtTVDescription.Text = _entry.movie.Overview;
                         txtTVGenre.Text = _entry.Genre;
-                        txtTVRating.Text = _entry.Rating;
-                        txtTVTitle.Text = _entry.Title;
-                        txtTVYear.Text = _entry.Year;
+                        txtTVRating.Text = _entry.movie.VoteAverage.ToString();
+                        txtTVTitle.Text = _entry.movie.Title;
+                        txtTVYear.Text = _entry.movie.ReleaseDate.Value.Year.ToString();
                         break;
                 }
 
@@ -1972,36 +1841,8 @@ namespace DrunkenBakery.ZuneTag
                 //pictureBox1.Image = pbCover.Image;
 
                 // Switch back to the first tab to see the results
+                AddLogEntry("Media file details updated.");
                 tabControl1.SelectedIndex = 0;
-            }
-        }
-
-        /// <summary>
-        /// Handles the Click event of the cmdNext control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void cmdNext_Click(object sender, EventArgs e)
-        {
-            pageNumber++;
-            AmazonSearch();
-        }
-
-        /// <summary>
-        /// Handles the Click event of the cmdPrev control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void cmdPrev_Click(object sender, EventArgs e)
-        {
-            pageNumber--;
-            if (pageNumber <= 0)
-            {
-                pageNumber = 1;
-            }
-            else
-            {
-                AmazonSearch();
             }
         }
 
@@ -2024,7 +1865,21 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="e">The <see cref="System.ComponentModel.DoWorkEventArgs"/> instance containing the event data.</param>
         private void backgroundWorker1_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            PerformSearch();
+            if (this.backgroundWorker1.CancellationPending)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            if (txtSearchCriteria.Text.Length == 0)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            TMDbClient client = new TMDbClient(Properties.Settings.Default.APIkey);
+            SearchContainer<SearchMovie> results = client.SearchMovieAsync(txtSearchCriteria.Text).Result;
+            e.Result = results;
         }
 
         /// <summary>
@@ -2034,9 +1889,40 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="e">The <see cref="System.ComponentModel.RunWorkerCompletedEventArgs"/> instance containing the event data.</param>
         private void backgroundWorker1_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
+            // Check for errors
+            if (e.Cancelled)
+            {
+                return;
+            }
+
+            if (e.Error != null)
+            {
+                this.AddLogEntry(string.Format("Error detected - {0}", e.Error));
+                return;
+            }
+
+            if (e.Result == null)
+            {
+                return;
+            }
+
+            // Display results
+            var results = (SearchContainer<SearchMovie>)e.Result;
+            foreach (SearchMovie result in results.Results)
+            {
+                AmazonEntry _entry = new AmazonEntry
+                {
+                    movie = result
+                };
+
+                lbResults.Items.Add(_entry);
+            }
+
+            // Visuals
             this.Cursor = Cursors.Default;
             progressBar1.Visible = false;
             SetButtons(true);
+            slStatus.Text = "";
         }
 
         /// <summary>
@@ -2099,6 +1985,20 @@ namespace DrunkenBakery.ZuneTag
             // Now re-add the keys
             AddAttrib(lblMediaFile.Text, newStream, "WM/MediaClassPrimaryID", Convert.ToUInt16(WMT_ATTR_DATATYPE.WMT_TYPE_GUID), TypeVideo, Language);
             AddAttrib(lblMediaFile.Text, newStream, "WM/MediaClassSecondaryID", Convert.ToUInt16(WMT_ATTR_DATATYPE.WMT_TYPE_GUID), TypeVideo, Language);
+        }
+
+        private void lbResults_DoubleClick(object sender, EventArgs e)
+        {
+            if (lbResults.SelectedItem == null) return;
+
+            AmazonEntry _entry = (AmazonEntry)lbResults.SelectedItem;
+            if (_entry != null)
+            {
+                if (_entry.URL.Length > 0)
+                {
+                    System.Diagnostics.Process.Start(_entry.URL);
+                }
+            }
         }
     }
 }

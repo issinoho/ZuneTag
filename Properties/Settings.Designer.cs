@@ -34,5 +34,23 @@ namespace DrunkenBakery.ZuneTag.Properties {
                 this["ApplicationVersion"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("624d6464298a9a465a6f3e401ea4ffee")]
+        public string APIkey {
+            get {
+                return ((string)(this["APIkey"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://image.tmdb.org/t/p/original")]
+        public string PosterBase {
+            get {
+                return ((string)(this["PosterBase"]));
+            }
+        }
     }
 }

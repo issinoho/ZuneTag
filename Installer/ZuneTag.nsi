@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Zune Tag"
-!define PRODUCT_VERSION "1.0.3581.16679"
+!define PRODUCT_VERSION "1.1.8699.25125"
 !define PRODUCT_PUBLISHER "The Drunken Bakery"
 !define PRODUCT_WEB_SITE "http://www.drunkenbakery.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\ZuneTag.exe"
@@ -47,11 +47,7 @@ ShowUnInstDetails show
 Section "MainSection" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
-  File "..\bin\x86\Release\WMFSDKWrapper.dll"
-  File "..\bin\x86\Release\License.txt"
-  File "..\bin\x86\Release\ZuneTag.exe"
-  File "..\bin\x86\Release\Interop.DexterLib.dll"
-  File "..\bin\x86\Release\JockerSoft.Media.dll"
+  File "..\bin\x86\Release\*"
   CreateDirectory "$SMPROGRAMS\ZuneTag"
   CreateShortCut "$SMPROGRAMS\ZuneTag\ZuneTag.lnk" "$INSTDIR\ZuneTag.exe"
   CreateShortCut "$DESKTOP\ZuneTag.lnk" "$INSTDIR\ZuneTag.exe"
@@ -87,12 +83,7 @@ FunctionEnd
 
 Section Uninstall
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
-  Delete "$INSTDIR\uninst.exe"
-  Delete "$INSTDIR\WMFSDKWrapper.dll"
-  Delete "$INSTDIR\ZuneTag.exe"
-  Delete "$INSTDIR\License.txt"
-  Delete "$INSTDIR\Interop.DexterLib.dll"
-  Delete "$INSTDIR\JockerSoft.Media.dll"
+  Delete "$INSTDIR\*"
 
   Delete "$SMPROGRAMS\ZuneTag\Uninstall.lnk"
   Delete "$SMPROGRAMS\ZuneTag\Website.lnk"

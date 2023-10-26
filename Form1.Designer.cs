@@ -128,8 +128,6 @@
             this.cbMediaType = new System.Windows.Forms.ComboBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.pbCover = new System.Windows.Forms.PictureBox();
-            this.cmdPrev = new System.Windows.Forms.Button();
-            this.cmdNext = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.cmdCopyAz = new System.Windows.Forms.Button();
             this.txtAzDescription = new System.Windows.Forms.TextBox();
@@ -139,7 +137,6 @@
             this.label34 = new System.Windows.Forms.Label();
             this.txtAzTitle = new System.Windows.Forms.TextBox();
             this.label33 = new System.Windows.Forms.Label();
-            this.lblPage = new System.Windows.Forms.Label();
             this.lbResults = new System.Windows.Forms.ListBox();
             this.label28 = new System.Windows.Forms.Label();
             this.cmdAmazonSearch = new System.Windows.Forms.Button();
@@ -274,6 +271,7 @@
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             this.toolsToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
+            this.toolsToolStripMenuItem.Visible = false;
             // 
             // nETVersionsToolStripMenuItem
             // 
@@ -1106,10 +1104,7 @@
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.pbCover);
-            this.tabPage3.Controls.Add(this.cmdPrev);
-            this.tabPage3.Controls.Add(this.cmdNext);
             this.tabPage3.Controls.Add(this.groupBox4);
-            this.tabPage3.Controls.Add(this.lblPage);
             this.tabPage3.Controls.Add(this.lbResults);
             this.tabPage3.Controls.Add(this.label28);
             this.tabPage3.Controls.Add(this.cmdAmazonSearch);
@@ -1119,7 +1114,7 @@
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(614, 326);
             this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Amazon";
+            this.tabPage3.Text = "TMDB";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // pbCover
@@ -1128,29 +1123,10 @@
             this.pbCover.InitialImage = ((System.Drawing.Image)(resources.GetObject("pbCover.InitialImage")));
             this.pbCover.Location = new System.Drawing.Point(469, 52);
             this.pbCover.Name = "pbCover";
-            this.pbCover.Size = new System.Drawing.Size(124, 163);
+            this.pbCover.Size = new System.Drawing.Size(128, 163);
+            this.pbCover.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pbCover.TabIndex = 9;
             this.pbCover.TabStop = false;
-            // 
-            // cmdPrev
-            // 
-            this.cmdPrev.Location = new System.Drawing.Point(366, 51);
-            this.cmdPrev.Name = "cmdPrev";
-            this.cmdPrev.Size = new System.Drawing.Size(23, 23);
-            this.cmdPrev.TabIndex = 8;
-            this.cmdPrev.Text = "<";
-            this.cmdPrev.UseVisualStyleBackColor = true;
-            this.cmdPrev.Click += new System.EventHandler(this.cmdPrev_Click);
-            // 
-            // cmdNext
-            // 
-            this.cmdNext.Location = new System.Drawing.Point(440, 52);
-            this.cmdNext.Name = "cmdNext";
-            this.cmdNext.Size = new System.Drawing.Size(23, 23);
-            this.cmdNext.TabIndex = 7;
-            this.cmdNext.Text = ">";
-            this.cmdNext.UseVisualStyleBackColor = true;
-            this.cmdNext.Click += new System.EventHandler(this.cmdNext_Click);
             // 
             // groupBox4
             // 
@@ -1204,7 +1180,7 @@
             // 
             this.label35.AutoSize = true;
             this.label35.ForeColor = System.Drawing.Color.Blue;
-            this.label35.Location = new System.Drawing.Point(19, 65);
+            this.label35.Location = new System.Drawing.Point(6, 65);
             this.label35.Name = "label35";
             this.label35.Size = new System.Drawing.Size(29, 13);
             this.label35.TabIndex = 84;
@@ -1222,7 +1198,7 @@
             // 
             this.label34.AutoSize = true;
             this.label34.ForeColor = System.Drawing.Color.Blue;
-            this.label34.Location = new System.Drawing.Point(19, 43);
+            this.label34.Location = new System.Drawing.Point(6, 43);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(44, 13);
             this.label34.TabIndex = 82;
@@ -1240,22 +1216,11 @@
             // 
             this.label33.AutoSize = true;
             this.label33.ForeColor = System.Drawing.Color.Blue;
-            this.label33.Location = new System.Drawing.Point(19, 21);
+            this.label33.Location = new System.Drawing.Point(6, 21);
             this.label33.Name = "label33";
             this.label33.Size = new System.Drawing.Size(27, 13);
             this.label33.TabIndex = 80;
             this.label33.Text = "Title";
-            // 
-            // lblPage
-            // 
-            this.lblPage.AutoSize = true;
-            this.lblPage.ForeColor = System.Drawing.Color.Blue;
-            this.lblPage.Location = new System.Drawing.Point(395, 56);
-            this.lblPage.Name = "lblPage";
-            this.lblPage.Size = new System.Drawing.Size(41, 13);
-            this.lblPage.TabIndex = 5;
-            this.lblPage.Text = "Page 1";
-            this.lblPage.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // lbResults
             // 
@@ -1285,7 +1250,7 @@
             this.cmdAmazonSearch.Name = "cmdAmazonSearch";
             this.cmdAmazonSearch.Size = new System.Drawing.Size(124, 23);
             this.cmdAmazonSearch.TabIndex = 2;
-            this.cmdAmazonSearch.Text = "   Search Amazon";
+            this.cmdAmazonSearch.Text = "   Search TMDB";
             this.cmdAmazonSearch.UseVisualStyleBackColor = true;
             this.cmdAmazonSearch.Click += new System.EventHandler(this.cmdAmazonSearch_Click);
             // 
@@ -1305,7 +1270,6 @@
             this.txtSearchCriteria.Name = "txtSearchCriteria";
             this.txtSearchCriteria.Size = new System.Drawing.Size(357, 20);
             this.txtSearchCriteria.TabIndex = 0;
-            this.txtSearchCriteria.TextChanged += new System.EventHandler(this.txtSearchCriteria_TextChanged);
             this.txtSearchCriteria.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearchCriteria_KeyDown);
             // 
             // tabPage2
@@ -1490,7 +1454,6 @@
         private System.Windows.Forms.TextBox txtSearchCriteria;
         private System.Windows.Forms.ListBox lbResults;
         private System.Windows.Forms.Label label28;
-        private System.Windows.Forms.Label lblPage;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.TextBox txtAzYear;
         private System.Windows.Forms.Label label35;
@@ -1500,8 +1463,6 @@
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.TextBox txtAzDescription;
         private System.Windows.Forms.Button cmdCopyAz;
-        private System.Windows.Forms.Button cmdPrev;
-        private System.Windows.Forms.Button cmdNext;
         private System.Windows.Forms.PictureBox pbCover;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.ProgressBar progressBar1;

@@ -5,5 +5,11 @@
     <Setting Name="ApplicationVersion" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="APIkey" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">624d6464298a9a465a6f3e401ea4ffee</Value>
+    </Setting>
+    <Setting Name="PosterBase" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://image.tmdb.org/t/p/original</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
