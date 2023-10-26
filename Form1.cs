@@ -1745,7 +1745,7 @@ namespace DrunkenBakery.ZuneTag
                 Movie movie = client.GetMovieAsync(entry.movie.Id).Result;
                 if (movie != null)
                 {
-                    entry.Genre = movie.Genres[0].Name ?? "unknown";
+                    entry.Genre = movie.Genres.Count > 0 ? movie.Genres[0].Name : "unknown";
                     entry.URL = movie.Homepage;
                 }
 
