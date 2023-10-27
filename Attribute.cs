@@ -16,7 +16,7 @@
 namespace DrunkenBakery.ZuneTag
 {
     using WMFSDKWrapper;
-    
+
     class Attribute
     {
         ushort _index;

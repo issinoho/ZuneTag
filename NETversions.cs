@@ -48,12 +48,12 @@ namespace DrunkenBakery.ZuneTag
             Microsoft.Win32.RegistryKey revKey;
 
             regKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\", false);
-            foreach ( string Keyname in regKey.GetSubKeyNames())
+            foreach (string Keyname in regKey.GetSubKeyNames())
             {
                 revKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\" + Keyname + @"\", false);
                 string revVal = (string)revKey.GetValue("Version");
                 AddEntry(Keyname, revVal);
-            } 
+            }
         }
 
         /// <summary>

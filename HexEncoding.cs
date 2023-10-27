@@ -16,11 +16,10 @@
 namespace DrunkenBakery.ZuneTag
 {
     using System;
-    using System.Text;
 
-	/// <summary>
-	/// Summary description for HexEncoding.
-	/// </summary>
+    /// <summary>
+    /// Summary description for HexEncoding.
+    /// </summary>
     public class HexEncoding
     {
         /// <summary>

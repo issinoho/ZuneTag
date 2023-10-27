@@ -47,7 +47,7 @@ namespace DrunkenBakery.ZuneTag
                                             System.Environment.NewLine +
                                             "Compiled on .NET " + asm.ImageRuntimeVersion.ToString() +
                                             System.Environment.NewLine +
-                                            "Running on .NET v" + Environment.Version.ToString() + 
+                                            "Running on .NET v" + Environment.Version.ToString() +
                                             System.Environment.NewLine;
 
             // Use Reflection to get a list of depenedent assemblies

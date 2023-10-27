@@ -133,7 +133,7 @@ namespace DrunkenBakery.ZuneTag
             {
                 ManagementObjectSearcher query1 = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem");
                 ManagementObjectCollection queryCollection1 = query1.Get();
-                foreach( ManagementObject mo in queryCollection1 ) 
+                foreach (ManagementObject mo in queryCollection1)
                 {
                     TreeNode childNode;
                     childNode = new TreeNode(mo["Caption"].ToString());
@@ -144,9 +144,9 @@ namespace DrunkenBakery.ZuneTag
                     childNode.ImageIndex = 8;
                     childNode.SelectedImageIndex = 8;
                     newNode.Nodes.Add(childNode);
-                }   
+                }
             }
-            catch(Exception)
+            catch (Exception)
             {
             }
         }
@@ -298,7 +298,7 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void cmdOK_Click(object sender, EventArgs e)
         {
-            this.Close();        
+            this.Close();
         }
 
         private void timer1_Tick(object sender, EventArgs e)
