@@ -297,7 +297,7 @@ namespace DrunkenBakery.ZuneTag
                 using (var engine = new Engine())
                 {
                     engine.GetMetadata(inputFile);
-                    var options = new ConversionOptions { Seek = TimeSpan.FromSeconds(5) };
+                    var options = new ConversionOptions { Seek = TimeSpan.FromSeconds(inputFile.Metadata.Duration.TotalSeconds / 5) };
                     engine.GetThumbnail(inputFile, outputFile, options);
                 }
 
