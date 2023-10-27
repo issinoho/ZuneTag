@@ -18,6 +18,8 @@ namespace DrunkenBakery.ZuneTag
     using System;
     using System.Windows.Forms;
 
+    using Microsoft.Win32;
+
     /// <summary>
     /// Reports on installed MDAC versions
     /// </summary>
@@ -28,15 +30,15 @@ namespace DrunkenBakery.ZuneTag
         /// </summary>
         public MDACversions()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             // Clear list
-            lvStatus.Columns.Add("Major Version", (lvStatus.Width / 2), HorizontalAlignment.Left);
-            lvStatus.Columns.Add("Revision", (lvStatus.Width / 2) - 3, HorizontalAlignment.Left);
-            lvStatus.Items.Clear();
+            this.lvStatus.Columns.Add("Major Version", this.lvStatus.Width / 2, HorizontalAlignment.Left);
+            this.lvStatus.Columns.Add("Revision", this.lvStatus.Width / 2 - 3, HorizontalAlignment.Left);
+            this.lvStatus.Items.Clear();
 
             // Now get the versions from the reg
-            ScrapeRegistry();
+            this.ScrapeRegistry();
         }
 
         /// <summary>
@@ -44,12 +46,13 @@ namespace DrunkenBakery.ZuneTag
         /// </summary>
         private void ScrapeRegistry()
         {
-            Microsoft.Win32.RegistryKey regKey;
-
-            regKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\DataAccess\", false);
-            string verVal = (string)regKey.GetValue("Version");
-            string revVal = (string)regKey.GetValue("FullInstallVer");
-            AddEntry(verVal, revVal);
+            var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\DataAccess\", false);
+            if (regKey != null)
+            {
+                var verVal = (string)regKey.GetValue("Version");
+                var revVal = (string)regKey.GetValue("FullInstallVer");
+                this.AddEntry(verVal, revVal);
+            }
         }
 
         /// <summary>
@@ -59,12 +62,10 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="subEntry">The sub entry.</param>
         private void AddEntry(string newEntry, string subEntry)
         {
-            ListViewItem itmX = null;
-
-            itmX = new ListViewItem(newEntry, 0);
-            lvStatus.Items.Add(itmX);
-            int i = (lvStatus.Items.Count - 1);
-            lvStatus.Items[i].SubItems.Add(subEntry);
+            var itmX = new ListViewItem(newEntry, 0);
+            this.lvStatus.Items.Add(itmX);
+            var i = this.lvStatus.Items.Count - 1;
+            this.lvStatus.Items[i].SubItems.Add(subEntry);
         }
 
         /// <summary>

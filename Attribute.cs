@@ -17,43 +17,38 @@ namespace DrunkenBakery.ZuneTag
 {
     using WMFSDKWrapper;
 
-    class Attribute
+    internal class Attribute
     {
-        ushort _index;
-        string _name;
-        string _value;
-        WMT_ATTR_DATATYPE _type;
-
-        public Attribute(ushort _index, string _name, string _value, WMT_ATTR_DATATYPE _type)
+        public Attribute(ushort index, string name, string value, WMT_ATTR_DATATYPE type)
         {
-            this._index = _index;
-            this._name = _name;
-            this._value = _value;
-            this._type = _type;
+            this.Index = index;
+            this.Name = name;
+            this.Value = value;
+            this.Type = type;
         }
 
         public ushort Index
         {
-            get { return _index; }
-            set { _index = value; }
+            get;
+            set;
         }
 
         public string Name
         {
-            get { return _name; }
-            set { _name = value; }
+            get;
+            set;
         }
 
         public string Value
         {
-            get { return _value; }
-            set { _value = value; }
+            get;
+            set;
         }
 
         public WMT_ATTR_DATATYPE Type
         {
-            get { return _type; }
-            set { _type = value; }
+            get;
+            set;
         }
 
         public override string ToString()

@@ -18,6 +18,8 @@ namespace DrunkenBakery.ZuneTag
     using System;
     using System.Windows.Forms;
 
+    using Microsoft.Win32;
+
     /// <summary>
     /// Reports on installed .NET versions
     /// </summary>
@@ -28,15 +30,15 @@ namespace DrunkenBakery.ZuneTag
         /// </summary>
         public NETversions()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             // Clear list
-            lvStatus.Columns.Add("Major Version", (lvStatus.Width / 2), HorizontalAlignment.Left);
-            lvStatus.Columns.Add("Revision", (lvStatus.Width / 2) - 3, HorizontalAlignment.Left);
-            lvStatus.Items.Clear();
+            this.lvStatus.Columns.Add("Major Version", this.lvStatus.Width / 2, HorizontalAlignment.Left);
+            this.lvStatus.Columns.Add("Revision", this.lvStatus.Width / 2 - 3, HorizontalAlignment.Left);
+            this.lvStatus.Items.Clear();
 
             // Now get the versions from the reg
-            ScrapeRegistry();
+            this.ScrapeRegistry();
         }
 
         /// <summary>
@@ -44,16 +46,17 @@ namespace DrunkenBakery.ZuneTag
         /// </summary>
         private void ScrapeRegistry()
         {
-            Microsoft.Win32.RegistryKey regKey;
-            Microsoft.Win32.RegistryKey revKey;
-
-            regKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\", false);
-            foreach (string Keyname in regKey.GetSubKeyNames())
-            {
-                revKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\" + Keyname + @"\", false);
-                string revVal = (string)revKey.GetValue("Version");
-                AddEntry(Keyname, revVal);
-            }
+            var regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\", false);
+            if (regKey != null)
+                foreach (var keyname in regKey.GetSubKeyNames())
+                {
+                    var revKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\" + keyname + @"\", false);
+                    if (revKey != null)
+                    {
+                        var revVal = (string) revKey.GetValue("Version");
+                        this.AddEntry(keyname, revVal);
+                    }
+                }
         }
 
         /// <summary>
@@ -66,9 +69,9 @@ namespace DrunkenBakery.ZuneTag
             ListViewItem itmX = null;
 
             itmX = new ListViewItem(newEntry, 0);
-            lvStatus.Items.Add(itmX);
-            int i = (lvStatus.Items.Count - 1);
-            lvStatus.Items[i].SubItems.Add(subEntry);
+            this.lvStatus.Items.Add(itmX);
+            var i = this.lvStatus.Items.Count - 1;
+            this.lvStatus.Items[i].SubItems.Add(subEntry);
         }
 
         /// <summary>

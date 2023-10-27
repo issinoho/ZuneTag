@@ -16,13 +16,14 @@
 namespace DrunkenBakery.ZuneTag
 {
     using System;
+    using System.IO;
     using System.Reflection;
     using System.Windows.Forms;
 
     /// <summary>
     /// Standard Cygnet About box.
     /// </summary>
-    partial class AboutBox1 : Form
+    internal partial class AboutBox1 : Form
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="AboutBox1"/> class.
@@ -31,7 +32,7 @@ namespace DrunkenBakery.ZuneTag
         {
             this.InitializeComponent();
 
-            Assembly asm = Assembly.GetExecutingAssembly();
+            var asm = Assembly.GetExecutingAssembly();
 
             // Initialize the AboutBox to display the product information from the assembly information.
             // Change assembly information settings for your application through either:
@@ -43,19 +44,19 @@ namespace DrunkenBakery.ZuneTag
             this.labelCopyright.Text = this.AssemblyCopyright;
             this.labelCompanyName.Text = this.AssemblyCompany;
             this.textBoxDescription.Text = this.AssemblyDescription +
-                                            System.Environment.NewLine +
-                                            System.Environment.NewLine +
-                                            "Compiled on .NET " + asm.ImageRuntimeVersion.ToString() +
-                                            System.Environment.NewLine +
-                                            "Running on .NET v" + Environment.Version.ToString() +
-                                            System.Environment.NewLine;
+                                            Environment.NewLine +
+                                            Environment.NewLine +
+                                            "Compiled on .NET " + asm.ImageRuntimeVersion +
+                                            Environment.NewLine +
+                                            "Running on .NET v" + Environment.Version +
+                                            Environment.NewLine;
 
             // Use Reflection to get a list of depenedent assemblies
-            this.textBoxDescription.AppendText(System.Environment.NewLine + "Dependent Assemblies:");
-            AssemblyName[] refs = asm.GetReferencedAssemblies();
-            foreach (AssemblyName myRef in refs)
+            this.textBoxDescription.AppendText(Environment.NewLine + "Dependent Assemblies:");
+            var refs = asm.GetReferencedAssemblies();
+            foreach (var myRef in refs)
             {
-                this.textBoxDescription.AppendText(System.Environment.NewLine + myRef.Name + " v" + myRef.Version.ToString());
+                this.textBoxDescription.AppendText(Environment.NewLine + myRef.Name + " v" + myRef.Version);
             }
         }
 
@@ -70,13 +71,13 @@ namespace DrunkenBakery.ZuneTag
             get
             {
                 // Get all Title attributes on this assembly
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
 
                 // If there is at least one Title attribute
                 if (attributes.Length > 0)
                 {
                     // Select the first one
-                    AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
+                    var titleAttribute = (AssemblyTitleAttribute)attributes[0];
 
                     // If it is not an empty string, return it
                     if (titleAttribute.Title != string.Empty)
@@ -86,7 +87,7 @@ namespace DrunkenBakery.ZuneTag
                 }
 
                 // If there was no Title attribute, or if the Title attribute was the empty string, return the .exe name
-                return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+                return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
             }
         }
 
@@ -111,7 +112,7 @@ namespace DrunkenBakery.ZuneTag
             get
             {
                 // Get all Description attributes on this assembly
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
 
                 // If there aren't any Description attributes, return an empty string
                 if (attributes.Length == 0)
@@ -133,7 +134,7 @@ namespace DrunkenBakery.ZuneTag
             get
             {
                 // Get all Product attributes on this assembly
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
 
                 // If there aren't any Product attributes, return an empty string
                 if (attributes.Length == 0)
@@ -155,7 +156,7 @@ namespace DrunkenBakery.ZuneTag
             get
             {
                 // Get all Copyright attributes on this assembly
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
 
                 // If there aren't any Copyright attributes, return an empty string
                 if (attributes.Length == 0)
@@ -177,7 +178,7 @@ namespace DrunkenBakery.ZuneTag
             get
             {
                 // Get all Company attributes on this assembly
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
 
                 // If there aren't any Company attributes, return an empty string
                 if (attributes.Length == 0)

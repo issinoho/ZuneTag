@@ -16,7 +16,9 @@
 namespace DrunkenBakery.ZuneTag
 {
     using System;
+    using System.Linq;
     using System.Management;
+    using System.Net;
     using System.Text.RegularExpressions;
     using System.Windows.Forms;
 
@@ -30,24 +32,26 @@ namespace DrunkenBakery.ZuneTag
         /// </summary>
         public SysInfo()
         {
-            InitializeComponent();
+            this.InitializeComponent();
 
             // Empty trees
-            tvOptions.Nodes.Clear();
-            tvCheat.Nodes.Clear();
+            this.tvOptions.Nodes.Clear();
+            this.tvCheat.Nodes.Clear();
 
             // Make the dummy one visible while we build the real tree
-            tvOptions.Visible = false;
-            tvCheat.Visible = true;
+            this.tvOptions.Visible = false;
+            this.tvCheat.Visible = true;
 
             // Please wait...
-            TreeNode newNode = new TreeNode("Gathering data, please wait...");
-            newNode.ImageIndex = 23;
-            newNode.SelectedImageIndex = 23;
-            tvCheat.Nodes.Add(newNode);
+            var newNode = new TreeNode("Gathering data, please wait...")
+            {
+                ImageIndex = 23,
+                SelectedImageIndex = 23
+            };
+            this.tvCheat.Nodes.Add(newNode);
 
             // Wait and then gather data
-            timer1.Enabled = true;
+            this.timer1.Enabled = true;
         }
 
         /// <summary>
@@ -55,43 +59,51 @@ namespace DrunkenBakery.ZuneTag
         /// </summary>
         private void BuildTree()
         {
-            TreeNode newNode;
-
             // Empty tree
             this.SuspendLayout();
-            tvOptions.Nodes.Clear();
+            this.tvOptions.Nodes.Clear();
 
             // Top level branches
-            newNode = new TreeNode("Operating System");
-            newNode.ImageIndex = 10;
-            newNode.SelectedImageIndex = 10;
-            tvOptions.Nodes.Add(newNode);
+            var newNode = new TreeNode("Operating System")
+            {
+                ImageIndex = 10,
+                SelectedImageIndex = 10
+            };
+            this.tvOptions.Nodes.Add(newNode);
             // OS children
-            GetOS(newNode);
+            GetOs(newNode);
 
-            newNode = new TreeNode("Computer");
-            newNode.ImageIndex = 0;
-            newNode.SelectedImageIndex = 0;
-            tvOptions.Nodes.Add(newNode);
+            newNode = new TreeNode("Computer")
+            {
+                ImageIndex = 0,
+                SelectedImageIndex = 0
+            };
+            this.tvOptions.Nodes.Add(newNode);
             // Computer children
             GetComputer(newNode);
 
-            newNode = new TreeNode("Owner");
-            newNode.ImageIndex = 12;
-            newNode.SelectedImageIndex = 12;
-            tvOptions.Nodes.Add(newNode);
+            newNode = new TreeNode("Owner")
+            {
+                ImageIndex = 12,
+                SelectedImageIndex = 12
+            };
+            this.tvOptions.Nodes.Add(newNode);
             GetOwner(newNode);
 
-            newNode = new TreeNode("Network");
-            newNode.ImageIndex = 11;
-            newNode.SelectedImageIndex = 11;
-            tvOptions.Nodes.Add(newNode);
+            newNode = new TreeNode("Network")
+            {
+                ImageIndex = 11,
+                SelectedImageIndex = 11
+            };
+            this.tvOptions.Nodes.Add(newNode);
             GetNetwork(newNode);
 
-            newNode = new TreeNode("Storage");
-            newNode.ImageIndex = 6;
-            newNode.SelectedImageIndex = 6;
-            tvOptions.Nodes.Add(newNode);
+            newNode = new TreeNode("Storage")
+            {
+                ImageIndex = 6,
+                SelectedImageIndex = 6
+            };
+            this.tvOptions.Nodes.Add(newNode);
             GetStorage(newNode);
 
             this.ResumeLayout();
@@ -101,20 +113,21 @@ namespace DrunkenBakery.ZuneTag
         /// Gets the storage information.
         /// </summary>
         /// <param name="newNode">The new node.</param>
-        private void GetStorage(TreeNode newNode)
+        private static void GetStorage(TreeNode newNode)
         {
             try
             {
-                ManagementObjectSearcher query1 = new ManagementObjectSearcher("select FreeSpace,Size,Name from Win32_LogicalDisk where DriveType=3");
-                ManagementObjectCollection queryCollection1 = query1.Get();
-                foreach (ManagementObject mo in queryCollection1)
+                var query1 = new ManagementObjectSearcher("select FreeSpace,Size,Name from Win32_LogicalDisk where DriveType=3");
+                var queryCollection1 = query1.Get();
+                foreach (var mo in queryCollection1.Cast<ManagementObject>())
                 {
-                    TreeNode childNode;
-                    UInt64 FreeSpace = System.Convert.ToUInt64(mo["FreeSpace"]);
-                    UInt64 Size = System.Convert.ToUInt64(mo["Size"]);
-                    childNode = new TreeNode(mo["Name"].ToString() + ": " + (Size / 1073741824) + " Gb (" + (FreeSpace / 1073741824) + " Gb free)");
-                    childNode.ImageIndex = 15;
-                    childNode.SelectedImageIndex = 15;
+                    var freeSpace = Convert.ToUInt64(mo["FreeSpace"]);
+                    var size = Convert.ToUInt64(mo["Size"]);
+                    var childNode = new TreeNode(mo["Name"] + ": " + size / 1073741824 + " Gb (" + freeSpace / 1073741824 + " Gb free)")
+                    {
+                        ImageIndex = 15,
+                        SelectedImageIndex = 15
+                    };
                     newNode.Nodes.Add(childNode);
                 }
             }
@@ -127,22 +140,25 @@ namespace DrunkenBakery.ZuneTag
         /// Gets the OS details.
         /// </summary>
         /// <param name="newNode">The new node.</param>
-        private void GetOS(TreeNode newNode)
+        private static void GetOs(TreeNode newNode)
         {
             try
             {
-                ManagementObjectSearcher query1 = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem");
-                ManagementObjectCollection queryCollection1 = query1.Get();
-                foreach (ManagementObject mo in queryCollection1)
+                var query1 = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem");
+                var queryCollection1 = query1.Get();
+                foreach (var mo in queryCollection1.Cast<ManagementObject>())
                 {
-                    TreeNode childNode;
-                    childNode = new TreeNode(mo["Caption"].ToString());
-                    childNode.ImageIndex = 7;
-                    childNode.SelectedImageIndex = 7;
+                    var childNode = new TreeNode(mo["Caption"].ToString())
+                    {
+                        ImageIndex = 7,
+                        SelectedImageIndex = 7
+                    };
                     newNode.Nodes.Add(childNode);
-                    childNode = new TreeNode(mo["CSDVersion"].ToString());
-                    childNode.ImageIndex = 8;
-                    childNode.SelectedImageIndex = 8;
+                    childNode = new TreeNode(mo["CSDVersion"].ToString())
+                    {
+                        ImageIndex = 8,
+                        SelectedImageIndex = 8
+                    };
                     newNode.Nodes.Add(childNode);
                 }
             }
@@ -155,46 +171,48 @@ namespace DrunkenBakery.ZuneTag
         /// Gets the network information.
         /// </summary>
         /// <param name="newNode">The new node.</param>
-        private void GetNetwork(TreeNode newNode)
+        private static void GetNetwork(TreeNode newNode)
         {
             try
             {
-                ManagementObjectSearcher query1;
-                ManagementObjectCollection queryCollection1;
-
                 // Domain stuff
-                query1 = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem");
-                queryCollection1 = query1.Get();
-                foreach (ManagementObject mo in queryCollection1)
+                var query1 = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem");
+                var queryCollection1 = query1.Get();
+                foreach (var mo in queryCollection1.Cast<ManagementObject>())
                 {
-                    TreeNode childNode;
-                    childNode = new TreeNode(mo["CSName"].ToString());
-                    childNode.ImageIndex = 22;
-                    childNode.SelectedImageIndex = 22;
+                    var childNode = new TreeNode(mo["CSName"].ToString())
+                    {
+                        ImageIndex = 22,
+                        SelectedImageIndex = 22
+                    };
                     newNode.Nodes.Add(childNode);
                 }
                 // Domain stuff
                 query1 = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem");
                 queryCollection1 = query1.Get();
-                foreach (ManagementObject mo in queryCollection1)
+                foreach (var mo in queryCollection1.Cast<ManagementObject>())
                 {
-                    TreeNode childNode;
-                    childNode = new TreeNode(mo["UserName"].ToString());
-                    childNode.ImageIndex = 2;
-                    childNode.SelectedImageIndex = 2;
+                    var childNode = new TreeNode(mo["UserName"].ToString())
+                    {
+                        ImageIndex = 2,
+                        SelectedImageIndex = 2
+                    };
                     newNode.Nodes.Add(childNode);
-                    childNode = new TreeNode(mo["Domain"].ToString());
-                    childNode.ImageIndex = 21;
-                    childNode.SelectedImageIndex = 21;
+                    childNode = new TreeNode(mo["Domain"].ToString())
+                    {
+                        ImageIndex = 21,
+                        SelectedImageIndex = 21
+                    };
                     newNode.Nodes.Add(childNode);
                 }
                 // IP Address
-                string myHost = System.Net.Dns.GetHostName();
-                string myIP = System.Net.Dns.GetHostEntry(myHost).AddressList[0].ToString();
-                TreeNode ipNode;
-                ipNode = new TreeNode(myIP);
-                ipNode.ImageIndex = 20;
-                ipNode.SelectedImageIndex = 20;
+                var myHost = Dns.GetHostName();
+                var myIp = Dns.GetHostEntry(myHost).AddressList[0].ToString();
+                var ipNode = new TreeNode(myIp)
+                {
+                    ImageIndex = 20,
+                    SelectedImageIndex = 20
+                };
                 newNode.Nodes.Add(ipNode);
             }
             catch (Exception)
@@ -206,26 +224,31 @@ namespace DrunkenBakery.ZuneTag
         /// Gets the owner information.
         /// </summary>
         /// <param name="newNode">The new node.</param>
-        private void GetOwner(TreeNode newNode)
+        private static void GetOwner(TreeNode newNode)
         {
             try
             {
-                ManagementObjectSearcher query1 = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem");
-                ManagementObjectCollection queryCollection1 = query1.Get();
-                foreach (ManagementObject mo in queryCollection1)
+                var query1 = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem");
+                var queryCollection1 = query1.Get();
+                foreach (var mo in queryCollection1.Cast<ManagementObject>())
                 {
-                    TreeNode childNode;
-                    childNode = new TreeNode(mo["RegisteredUser"].ToString());
-                    childNode.ImageIndex = 3;
-                    childNode.SelectedImageIndex = 3;
+                    var childNode = new TreeNode(mo["RegisteredUser"].ToString())
+                    {
+                        ImageIndex = 3,
+                        SelectedImageIndex = 3
+                    };
                     newNode.Nodes.Add(childNode);
-                    childNode = new TreeNode(mo["Organization"].ToString());
-                    childNode.ImageIndex = 4;
-                    childNode.SelectedImageIndex = 4;
+                    childNode = new TreeNode(mo["Organization"].ToString())
+                    {
+                        ImageIndex = 4,
+                        SelectedImageIndex = 4
+                    };
                     newNode.Nodes.Add(childNode);
-                    childNode = new TreeNode(mo["SerialNumber"].ToString());
-                    childNode.ImageIndex = 5;
-                    childNode.SelectedImageIndex = 5;
+                    childNode = new TreeNode(mo["SerialNumber"].ToString())
+                    {
+                        ImageIndex = 5,
+                        SelectedImageIndex = 5
+                    };
                     newNode.Nodes.Add(childNode);
                 }
             }
@@ -238,52 +261,53 @@ namespace DrunkenBakery.ZuneTag
         /// Gets the computer details.
         /// </summary>
         /// <param name="newNode">The new node.</param>
-        private void GetComputer(TreeNode newNode)
+        private static void GetComputer(TreeNode newNode)
         {
             try
             {
-                ManagementObjectSearcher query1;
-                ManagementObjectCollection queryCollection1;
-
                 // Manufacturer details
-                query1 = new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem");
-                queryCollection1 = query1.Get();
-                foreach (ManagementObject mo in queryCollection1)
+                var query1 =
+                    new ManagementObjectSearcher("SELECT * FROM Win32_ComputerSystem");
+                var queryCollection1 = query1.Get();
+                foreach (var mo in queryCollection1.Cast<ManagementObject>())
                 {
-                    TreeNode childNode;
-                    childNode = new TreeNode(mo["Manufacturer"].ToString());
-                    childNode.ImageIndex = 14;
-                    childNode.SelectedImageIndex = 14;
+                    var childNode = new TreeNode(mo["Manufacturer"].ToString())
+                    {
+                        ImageIndex = 14,
+                        SelectedImageIndex = 14
+                    };
                     newNode.Nodes.Add(childNode);
-                    childNode = new TreeNode(mo["Model"].ToString());
-                    childNode.ImageIndex = 13;
-                    childNode.SelectedImageIndex = 13;
+                    childNode = new TreeNode(mo["Model"].ToString())
+                    {
+                        ImageIndex = 13,
+                        SelectedImageIndex = 13
+                    };
                     newNode.Nodes.Add(childNode);
                 }
+
                 // Processor details
                 query1 = new ManagementObjectSearcher("SELECT * FROM Win32_Processor");
                 queryCollection1 = query1.Get();
-                int count = 1;
-                foreach (ManagementObject mo in queryCollection1)
+                var count = 1;
+                foreach (var mo in queryCollection1.Cast<ManagementObject>())
                 {
-                    TreeNode childNode;
-                    childNode = new TreeNode("CPU " + count++ + ": " + Regex.Replace(mo["Name"].ToString(), @"^\s+|\s+$", "") + " (" + mo["AddressWidth"].ToString() + " bit)");
-                    childNode.ImageIndex = 17;
-                    childNode.SelectedImageIndex = 17;
+                    var childNode = new TreeNode("CPU " + count++ + ": " + Regex.Replace(mo["Name"].ToString(), @"^\s+|\s+$", "") + " (" + mo["AddressWidth"] + " bit)")
+                    {
+                        ImageIndex = 17,
+                        SelectedImageIndex = 17
+                    };
                     newNode.Nodes.Add(childNode);
                 }
+
                 // Memory
-                UInt64 totalCapacity = 0;
                 query1 = new ManagementObjectSearcher("SELECT * FROM Win32_PhysicalMemory");
                 queryCollection1 = query1.Get();
-                foreach (ManagementObject mo in queryCollection1)
+                var totalCapacity = queryCollection1.Cast<ManagementObject>().Aggregate<ManagementObject, ulong>(0, (current, mo) => current + Convert.ToUInt64(mo["Capacity"]));
+                var memNode = new TreeNode("Memory: " + totalCapacity / 1073741824 + " Gb")
                 {
-                    totalCapacity += System.Convert.ToUInt64(mo["Capacity"]);
-                }
-                TreeNode memNode;
-                memNode = new TreeNode("Memory: " + (totalCapacity / 1073741824) + " Gb");
-                memNode.ImageIndex = 19;
-                memNode.SelectedImageIndex = 19;
+                    ImageIndex = 19,
+                    SelectedImageIndex = 19
+                };
                 newNode.Nodes.Add(memNode);
             }
             catch (Exception)
@@ -304,15 +328,15 @@ namespace DrunkenBakery.ZuneTag
         private void timer1_Tick(object sender, EventArgs e)
         {
             // Stop re-entrancy
-            timer1.Enabled = false;
+            this.timer1.Enabled = false;
 
             // Tree
-            BuildTree();
-            tvOptions.SelectedNode = tvOptions.Nodes[0];
+            this.BuildTree();
+            this.tvOptions.SelectedNode = this.tvOptions.Nodes[0];
 
             // Now switch the trees
-            tvCheat.Visible = false;
-            tvOptions.Visible = true;
+            this.tvCheat.Visible = false;
+            this.tvOptions.Visible = true;
         }
     }
 }

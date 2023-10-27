@@ -16,6 +16,8 @@
 namespace DrunkenBakery.ZuneTag
 {
     using System;
+    using System.Globalization;
+    using System.Linq;
 
     /// <summary>
     /// Summary description for HexEncoding.
@@ -39,16 +41,10 @@ namespace DrunkenBakery.ZuneTag
         /// <returns></returns>
         public static int GetByteCount(string hexString)
         {
-            int numHexChars = 0;
-            char c;
-            // remove all none A-F, 0-9, characters
-            for (int i = 0; i < hexString.Length; i++)
-            {
-                c = hexString[i];
-                if (IsHexDigit(c))
-                    numHexChars++;
-            }
-            // if odd number of characters, discard last character
+            // Remove all none A-F, 0-9, characters
+            var numHexChars = hexString.Count(IsHexDigit);
+
+            // If odd number of characters, discard last character
             if (numHexChars % 2 != 0)
             {
                 numHexChars--;
@@ -67,33 +63,30 @@ namespace DrunkenBakery.ZuneTag
         public static byte[] GetBytes(string hexString, out int discarded)
         {
             discarded = 0;
-            string newString = "";
-            char c;
-            // remove all none A-F, 0-9, characters
-            for (int i = 0; i < hexString.Length; i++)
+            var newString = "";
+            // Remove all none A-F, 0-9, characters
+            foreach (var t in hexString)
             {
-                c = hexString[i];
-                if (IsHexDigit(c))
-                    newString += c;
+                if (IsHexDigit(t))
+                    newString += t;
                 else
                     discarded++;
             }
-            // if odd number of characters, discard last character
+            // If odd number of characters, discard last character
             if (newString.Length % 2 != 0)
             {
                 discarded++;
                 newString = newString.Substring(0, newString.Length - 1);
             }
 
-            int byteLength = newString.Length / 2;
-            byte[] bytes = new byte[byteLength];
-            string hex;
-            int j = 0;
-            for (int i = 0; i < bytes.Length; i++)
+            var byteLength = newString.Length / 2;
+            var bytes = new byte[byteLength];
+            var j = 0;
+            for (var i = 0; i < bytes.Length; i++)
             {
-                hex = new String(new Char[] { newString[j], newString[j + 1] });
+                var hex = new string(new[] { newString[j], newString[j + 1] });
                 bytes[i] = HexToByte(hex);
-                j = j + 2;
+                j += 2;
             }
             return bytes;
         }
@@ -105,12 +98,7 @@ namespace DrunkenBakery.ZuneTag
         /// <returns></returns>
         public static string ToString(byte[] bytes)
         {
-            string hexString = "";
-            for (int i = 0; i < bytes.Length; i++)
-            {
-                hexString += bytes[i].ToString("X2");
-            }
-            return hexString;
+            return bytes.Aggregate("", (current, t) => current + t.ToString("X2"));
         }
 
         /// <summary>
@@ -120,17 +108,7 @@ namespace DrunkenBakery.ZuneTag
         /// <returns></returns>
         public static bool InHexFormat(string hexString)
         {
-            bool hexFormat = true;
-
-            foreach (char digit in hexString)
-            {
-                if (!IsHexDigit(digit))
-                {
-                    hexFormat = false;
-                    break;
-                }
-            }
-            return hexFormat;
+            return hexString.All(IsHexDigit);
         }
 
         /// <summary>
@@ -138,22 +116,19 @@ namespace DrunkenBakery.ZuneTag
         /// </summary>
         /// <param name="c">Character to test</param>
         /// <returns>true if hex digit, false if not</returns>
-        public static bool IsHexDigit(Char c)
+        public static bool IsHexDigit(char c)
         {
-            int numChar;
-            int numA = Convert.ToInt32('A');
-            int num1 = Convert.ToInt32('0');
-            c = Char.ToUpper(c);
-            numChar = Convert.ToInt32(c);
-            if (numChar >= numA && numChar < (numA + 6))
+            var numA = Convert.ToInt32('A');
+            var num1 = Convert.ToInt32('0');
+            c = char.ToUpper(c);
+            var numChar = Convert.ToInt32(c);
+            if (numChar >= numA && numChar < numA + 6)
                 return true;
-            if (numChar >= num1 && numChar < (num1 + 10))
-                return true;
-            return false;
+            return numChar >= num1 && numChar < num1 + 10;
         }
 
         /// <summary>
-        /// Converts 1 or 2 character string into equivalant byte value
+        /// Converts 1 or 2 character string into equivalent byte value
         /// </summary>
         /// <param name="hex">1 or 2 character string</param>
         /// <returns>byte</returns>
@@ -161,7 +136,7 @@ namespace DrunkenBakery.ZuneTag
         {
             if (hex.Length > 2 || hex.Length <= 0)
                 throw new ArgumentException("hex must be 1 or 2 characters in length");
-            byte newByte = byte.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+            var newByte = byte.Parse(hex, NumberStyles.HexNumber);
             return newByte;
         }
     }

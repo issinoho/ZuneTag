@@ -11,34 +11,34 @@
 //
 // Author: IRS
 // $Revision: 1.2 $
-//------------------------------------------------------------------using System;
-
-using TMDbLib.Objects.Search;
+//------------------------------------------------------------------
 
 namespace DrunkenBakery.ZuneTag
 {
-    class AmazonEntry
-    {
-        public SearchMovie movie { get; set; }
+    using TMDbLib.Objects.Search;
 
-        public bool extraData { get; set; }
+    internal class AmazonEntry
+    {
+        public SearchMovie Movie { get; set; }
+
+        public bool ExtraData { get; set; }
 
         public string Genre { get; set; }
 
-        public string URL { get; set; }
+        public string Url { get; set; }
 
         public string Director { get; set; }
 
         public AmazonEntry()
         {
-            this.extraData = false;
+            this.ExtraData = false;
             this.Genre = "unknown";
             this.Director = "unknown";
         }
 
         public override string ToString()
         {
-            return movie.Title;
+            return this.Movie.Title;
         }
     }
 }
