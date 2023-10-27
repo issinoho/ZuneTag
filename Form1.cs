@@ -297,11 +297,13 @@ namespace DrunkenBakery.ZuneTag
         private void cmdBrowse_Click(object sender, EventArgs e)
         {
             // Get file
-            var openFileDialog1 = new OpenFileDialog();
-            openFileDialog1.InitialDirectory = Environment.CurrentDirectory;
-            openFileDialog1.Filter = @"Windows Media Video (*.wmv)|*.wmv";
-            openFileDialog1.FilterIndex = 1;
-            openFileDialog1.RestoreDirectory = false;
+            var openFileDialog1 = new OpenFileDialog
+            {
+                InitialDirectory = Environment.CurrentDirectory,
+                Filter = @"Windows Media Video (*.wmv)|*.wmv",
+                FilterIndex = 1,
+                RestoreDirectory = false
+            };
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
@@ -380,9 +382,8 @@ namespace DrunkenBakery.ZuneTag
 
             // String for holding layout
 
-            var layout =
-                // Determine if it's Portrait or Landscape
-                currH > currW ? "portrait" : "landscape";
+            // Determine if it's Portrait or Landscape
+            var layout = currH > currW ? "portrait" : "landscape";
 
             switch (layout.ToLower())
             {
@@ -485,80 +486,80 @@ namespace DrunkenBakery.ZuneTag
             this.attributes.Clear();
             this.cbAttributes.Items.Clear();
 
+            // Get attributes
+            if (!this.ShowAttributes3(this.lblMediaFile.Text, Stream)) return;
+
             // Update from file
-            if (this.ShowAttributes3(this.lblMediaFile.Text, Stream))
+            foreach (var u in this.attributes)
             {
-                foreach (var u in this.attributes)
+                // Add to combo box
+                this.cbAttributes.Items.Add(u);
+
+                // Is this a video
+                if (u.Name == "WM/MediaClassPrimaryID")
                 {
-                    // Add to combo box
-                    this.cbAttributes.Items.Add(u);
+                    this.indexPrimaryVideo = u.Index;
+                    isVideo = u.Value == TypeVideo;
+                    if (isVideo) thisIndex = 1;
+                }
 
-                    // Is this a video
-                    if (u.Name == "WM/MediaClassPrimaryID")
+                // Type of video?
+                if (u.Name == "WM/MediaClassSecondaryID")
+                {
+                    this.indexSecondaryVideo = u.Index;
+
+                    if (isVideo)
                     {
-                        this.indexPrimaryVideo = u.Index;
-                        isVideo = u.Value == TypeVideo;
-                        if (isVideo) thisIndex = 1;
-                    }
-
-                    // Type of video?
-                    if (u.Name == "WM/MediaClassSecondaryID")
-                    {
-                        this.indexSecondaryVideo = u.Index;
-
-                        if (isVideo)
+                        switch (u.Value)
                         {
-                            switch (u.Value)
-                            {
-                                case TypeMovie:
-                                    thisIndex = 2;
-                                    break;
+                            case TypeMovie:
+                                thisIndex = 2;
+                                break;
 
-                                case TypeMusic:
-                                    thisIndex = 3;
-                                    break;
+                            case TypeMusic:
+                                thisIndex = 3;
+                                break;
 
-                                case TypeTv:
-                                    thisIndex = 4;
-                                    break;
-                            }
+                            case TypeTv:
+                                thisIndex = 4;
+                                break;
                         }
                     }
                 }
+            }
 
-                this.cbAttributes.SelectedIndex = 0;
-                this.cbMediaType.SelectedIndex = thisIndex;
+            this.cbAttributes.SelectedIndex = 0;
+            this.cbMediaType.SelectedIndex = thisIndex;
 
-                // Update fields
-                this.txtSearchCriteria.Text = "";
-                switch (thisIndex)
-                {
-                    case 1:
-                        this.LoadVideoAttributes();
-                        break;
+            // Update fields
+            this.txtSearchCriteria.Text = "";
+            switch (thisIndex)
+            {
+                case 1:
+                    this.LoadVideoAttributes();
+                    break;
 
-                    case 2:
-                        this.LoadMovieAttributes();
-                        break;
+                case 2:
+                    this.LoadMovieAttributes();
+                    break;
 
-                    case 3:
-                        this.LoadMusicAttributes();
-                        break;
+                case 3:
+                    this.LoadMusicAttributes();
+                    break;
 
-                    case 4:
-                        this.LoadTvAttributes();
-                        break;
-                }
+                case 4:
+                    this.LoadTvAttributes();
+                    break;
+            }
 
-                // If no title has been established then look at filename
-                if (this.txtSearchCriteria.Text.Length == 0)
-                {
-                    var filename = Path.GetFileNameWithoutExtension(this.lblMediaFile.Text);
-                    filename = filename.Replace(".", " ");
-                    filename = filename.Replace("_", " ");
-                    filename = filename.Replace("-", " ");
-                    this.txtSearchCriteria.Text = filename;
-                }
+            // If no title has been established then look at filename
+            if (this.txtSearchCriteria.Text.Length == 0)
+            {
+                var filename = Path.GetFileNameWithoutExtension(this.lblMediaFile.Text);
+                filename = filename.Replace(".", " ");
+                filename = filename.Replace("_", " ");
+                filename = filename.Replace("-", " ");
+                this.txtSearchCriteria.Text = filename;
             }
         }
 
@@ -599,7 +600,7 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="dwValueLen">The dw value len.</param>
         public void PrintAttribute(ushort wIndex, ushort wStream, string pwszName, WMT_ATTR_DATATYPE attribDataType, ushort wLangId, byte[] pbValue, uint dwValueLen)
         {
-            var pwszValue = String.Empty;
+            var pwszValue = string.Empty;
 
             //
             // Make the data type string
