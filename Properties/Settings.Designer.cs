@@ -9,16 +9,13 @@
 //------------------------------------------------------------------------------
 
 namespace DrunkenBakery.ZuneTag.Properties {
-    using System.CodeDom.Compiler;
-    using System.Configuration;
-    using System.Diagnostics;
-    using System.Runtime.CompilerServices;
-
-    [CompilerGenerated()]
-    [GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.6.0.0")]
-    internal sealed partial class Settings : ApplicationSettingsBase {
+    
+    
+    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.6.0.0")]
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static Settings defaultInstance = ((Settings)(Synchronized(new Settings())));
+        private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
         
         public static Settings Default {
             get {
@@ -26,9 +23,9 @@ namespace DrunkenBakery.ZuneTag.Properties {
             }
         }
         
-        [UserScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("")]
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string ApplicationVersion {
             get {
                 return ((string)(this["ApplicationVersion"]));
@@ -38,21 +35,30 @@ namespace DrunkenBakery.ZuneTag.Properties {
             }
         }
         
-        [ApplicationScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("624d6464298a9a465a6f3e401ea4ffee")]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("624d6464298a9a465a6f3e401ea4ffee")]
         public string APIkey {
             get {
                 return ((string)(this["APIkey"]));
             }
         }
         
-        [ApplicationScopedSetting()]
-        [DebuggerNonUserCode()]
-        [DefaultSettingValue("http://image.tmdb.org/t/p/original")]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://image.tmdb.org/t/p/original")]
         public string PosterBase {
             get {
                 return ((string)(this["PosterBase"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("temp.jpg")]
+        public string TemporaryFile {
+            get {
+                return ((string)(this["TemporaryFile"]));
             }
         }
     }

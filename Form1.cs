@@ -25,6 +25,7 @@ namespace DrunkenBakery.ZuneTag
     using System.Linq;
     using System.Net;
     using System.Reflection;
+    using System.Runtime.ExceptionServices;
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Windows.Forms;
@@ -323,7 +324,7 @@ namespace DrunkenBakery.ZuneTag
                 return;
             }
 
-            var tempFilePath = AppContext.BaseDirectory + "temp.jpg";
+            var tempFilePath = AppContext.BaseDirectory + Settings.Default.TemporaryFile;
             var outputFile = new MediaFile
             {
                 Filename = tempFilePath
@@ -348,14 +349,6 @@ namespace DrunkenBakery.ZuneTag
             var fs = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read);
             this.pictureBox1.Image = Image.FromStream(fs);
             fs.Close();
-            try
-            {
-                File.Delete(tempFilePath);
-            }
-            catch (Exception e)
-            {
-                this.AddLogEntry("Error deleting temporary file - " + e.Message, LogType.Fail);
-            }
 
             // Make sure all supported attributes are defined
             this.AddMissingAttributes();
@@ -364,7 +357,7 @@ namespace DrunkenBakery.ZuneTag
             this.InspectFile();
 
             // Logging
-            this.AddLogEntry(this.lblMediaFile.Text + " successfully loaded", LogType.Success);
+            this.AddLogEntry(this.lblMediaFile.Text + " successfully loaded");
         }
 
         /// <summary>
@@ -1219,7 +1212,7 @@ namespace DrunkenBakery.ZuneTag
             // Refresh screen
             if (newType.Length > 0)
             {
-                this.AddLogEntry("File modified to be a " + newType, LogType.Success);
+                this.AddLogEntry("File modified to be a " + newType);
                 this.InspectFile();
             }
         }
@@ -1491,7 +1484,8 @@ namespace DrunkenBakery.ZuneTag
             this.EditAttribute("WM/TVNetworkAffiliation", this.txtTVNetwork.Text);
             this.EditAttribute("WM/Genre", this.txtTVGenre.Text);
             this.EditAttribute("WM/TrackNumber", this.txtTVTrack.Text);
-            this.AddLogEntry(this.lblMediaFile.Text + " successfully modified", LogType.Success);
+            this.EditPicture(pictureBox1);
+            this.AddLogEntry(this.lblMediaFile.Text + " successfully modified");
             this.InspectFile();
         }
 
@@ -1523,7 +1517,8 @@ namespace DrunkenBakery.ZuneTag
             this.EditAttribute("WM/OriginalBroadcastDateTime", this.txtMovieDate.Text);
             this.EditAttribute("WM/ParentalRating", this.txtMovieRating.Text);
             this.EditAttribute("WM/Genre", this.txtMovieGenre.Text);
-            this.AddLogEntry(this.lblMediaFile.Text + " successfully modified", LogType.Success);
+            this.EditPicture(pictureBox1);
+            this.AddLogEntry(this.lblMediaFile.Text + " successfully modified");
             this.InspectFile();
         }
 
@@ -1541,7 +1536,8 @@ namespace DrunkenBakery.ZuneTag
             this.EditAttribute("WM/OriginalBroadcastDateTime", this.txtMusicDate.Text);
             this.EditAttribute("WM/ParentalRating", this.txtMusicRating.Text);
             this.EditAttribute("WM/Genre", this.txtMusicGenre.Text);
-            this.AddLogEntry(this.lblMediaFile.Text + " successfully modified", LogType.Success);
+            this.EditPicture(pictureBox1);
+            this.AddLogEntry(this.lblMediaFile.Text + " successfully modified");
             this.InspectFile();
         }
 
@@ -1557,7 +1553,8 @@ namespace DrunkenBakery.ZuneTag
             this.EditAttribute("Author", this.txtVideoAuthor.Text);
             this.EditAttribute("WM/Year", this.txtVideoYear.Text);
             this.EditAttribute("WM/Genre", this.txtVideoGenre.Text);
-            this.AddLogEntry(this.lblMediaFile.Text + " successfully modified", LogType.Success);
+            this.EditPicture(pictureBox1);
+            this.AddLogEntry(this.lblMediaFile.Text + " successfully modified");
             this.InspectFile();
         }
 
@@ -1868,6 +1865,63 @@ namespace DrunkenBakery.ZuneTag
             if (entry?.Url.Length > 0)
             {
                 Process.Start(entry.Url);
+            }
+        }
+
+        /// <summary>
+        /// Edits the picture.
+        /// </summary>
+        [HandleProcessCorruptedStateExceptions]
+        private void EditPicture(PictureBox myPicture)
+        {
+            IWMMetadataEditor MetadataEditor;
+            IWMHeaderInfo3 HeaderInfo3;
+
+            try
+            {
+                WMPicture picture = new WMPicture
+                {
+                    pwszMIMEType = Marshal.StringToCoTaskMemUni("image/jpeg\0"),
+                    pwszDescription = Marshal.StringToCoTaskMemUni("AlbumArt\0"),
+                    bPictureType = 3
+                };
+
+                var tempFilePath = AppContext.BaseDirectory + Settings.Default.TemporaryFile;
+                byte[] data = File.ReadAllBytes(tempFilePath);
+                picture.dwDataLen = data.Length;
+                picture.pbData = Marshal.AllocCoTaskMem(picture.dwDataLen);
+                Marshal.Copy(data, 0, picture.pbData, picture.dwDataLen);
+                IntPtr pictureParam = Marshal.AllocCoTaskMem(Marshal.SizeOf(picture));
+                Marshal.StructureToPtr(picture, pictureParam, false);
+
+                WMFSDKFunctions.WMCreateEditor(out MetadataEditor);
+                MetadataEditor.Open(lblMediaFile.Text);
+                HeaderInfo3 = (IWMHeaderInfo3)MetadataEditor;
+                //HeaderInfo3.SetPicAttribute(0, "WM/Picture", WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, pictureParam, (ushort)Marshal.SizeOf(picture));
+                MetadataEditor.Flush();
+                MetadataEditor.Close();
+            }
+            catch (Exception e)
+            {
+                this.AddLogEntry(e.Message, LogType.Fail);
+            }
+        }
+
+        /// <summary>
+        /// Captures the form closing event.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The instance containing the event data</param>
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            var tempFilePath = AppContext.BaseDirectory + Settings.Default.TemporaryFile;
+            try
+            {
+                File.Delete(tempFilePath);
+            }
+            catch (Exception f)
+            {
+                this.AddLogEntry(f.Message, LogType.Fail);
             }
         }
     }
