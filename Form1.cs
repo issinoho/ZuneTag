@@ -15,6 +15,7 @@
 
 namespace DrunkenBakery.ZuneTag
 {
+    using DrunkenBakery.ZuneTag.Properties;
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -28,20 +29,14 @@ namespace DrunkenBakery.ZuneTag
     using System.Runtime.ExceptionServices;
     using System.Runtime.InteropServices;
     using System.Threading;
+    using System.Threading.Tasks;
     using System.Windows.Forms;
-
-    using DrunkenBakery.ZuneTag.Properties;
-
-    using MediaToolkit;
-    using MediaToolkit.Model;
-    using MediaToolkit.Options;
-
     using TMDbLib.Client;
     using TMDbLib.Objects.General;
     using TMDbLib.Objects.Search;
-
     using WMFSDKWrapper;
-
+    using Xabe.FFmpeg;
+    using Xabe.FFmpeg.Downloader;
     using Timer = System.Threading.Timer;
 
     /// <summary>
@@ -141,6 +136,9 @@ namespace DrunkenBakery.ZuneTag
 
             // Initialise Media Types
             this.InitMediaTypes();
+
+            // Ensure FFmpeg is available
+            FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official);
 
             // Logging
             this.AddLogEntry("--------------------------------------------------", LogType.Info);
@@ -309,44 +307,30 @@ namespace DrunkenBakery.ZuneTag
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 this.lblMediaFile.Text = openFileDialog1.FileName;
-                this.RegisterNewMediaFile();
+                _ = this.RegisterNewMediaFileAsync();
             }
         }
 
         /// <summary>
         /// Registers the new media file.
         /// </summary>
-        private void RegisterNewMediaFile()
+        private async Task RegisterNewMediaFileAsync()
         {
-            if (!File.Exists(this.lblMediaFile.Text))
+            string input = this.lblMediaFile.Text;
+            string output = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".png");
+
+            if (!File.Exists(input))
             {
                 this.AddLogEntry("Can't load - media file not found", LogType.Fail);
                 return;
             }
 
-            var tempFilePath = AppContext.BaseDirectory + Settings.Default.TemporaryFile;
-            var outputFile = new MediaFile
-            {
-                Filename = tempFilePath
-            };
-            var inputFile = new MediaFile
-            {
-                Filename = this.lblMediaFile.Text
-            };
-
             // Grab still frame, if possible
-            using (var engine = new Engine())
-            {
-                engine.GetMetadata(inputFile);
-                var options = new ConversionOptions
-                {
-                    Seek = TimeSpan.FromSeconds(inputFile.Metadata.Duration.TotalSeconds / 5)
-                };
-                engine.GetThumbnail(inputFile, outputFile, options);
-            }
+            IConversion conversion = await FFmpeg.Conversions.FromSnippet.Snapshot(input, output, TimeSpan.FromSeconds(1));
+            IConversionResult result = await conversion.Start();
 
             // Load frame into PB
-            var fs = new FileStream(tempFilePath, FileMode.Open, FileAccess.Read);
+            var fs = new FileStream(output, FileMode.Open, FileAccess.Read);
             this.pictureBox1.Image = Image.FromStream(fs);
             fs.Close();
 
@@ -1806,7 +1790,7 @@ namespace DrunkenBakery.ZuneTag
             if (ext == ".wmv")
             {
                 this.lblMediaFile.Text = s[0];
-                this.RegisterNewMediaFile();
+                this.RegisterNewMediaFileAsync();
             }
             else
             {
