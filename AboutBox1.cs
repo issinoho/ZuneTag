@@ -41,7 +41,7 @@ namespace DrunkenBakery.ZuneTag
             this.Text = String.Format("About {0}", this.AssemblyTitle);
             this.labelProductName.Text = this.AssemblyProduct + " - " + this.AssemblyTitle;
             this.labelVersion.Text = String.Format("Version {0}", this.AssemblyVersion);
-            this.labelCopyright.Text = this.AssemblyCopyright;
+            this.labelCopyright.Text = this.AssemblyCopyright + DateTime.Today.Year;
             this.labelCompanyName.Text = this.AssemblyCompany;
             this.textBoxDescription.Text = this.AssemblyDescription +
                                             Environment.NewLine +

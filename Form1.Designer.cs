@@ -45,10 +45,6 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.nETVersionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.mDACVersionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.systemInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -239,7 +235,6 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.toolsToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -260,45 +255,9 @@
             // 
             this.exitToolStripMenuItem1.Image = ((System.Drawing.Image)(resources.GetObject("exitToolStripMenuItem1.Image")));
             this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
-            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(93, 22);
+            this.exitToolStripMenuItem1.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem1.Text = "Exit";
             this.exitToolStripMenuItem1.Click += new System.EventHandler(this.exitToolStripMenuItem1_Click);
-            // 
-            // toolsToolStripMenuItem
-            // 
-            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.nETVersionsToolStripMenuItem,
-            this.mDACVersionsToolStripMenuItem,
-            this.systemInformationToolStripMenuItem});
-            this.toolsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("toolsToolStripMenuItem.Image")));
-            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
-            this.toolsToolStripMenuItem.Text = "Tools";
-            this.toolsToolStripMenuItem.Visible = false;
-            // 
-            // nETVersionsToolStripMenuItem
-            // 
-            this.nETVersionsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("nETVersionsToolStripMenuItem.Image")));
-            this.nETVersionsToolStripMenuItem.Name = "nETVersionsToolStripMenuItem";
-            this.nETVersionsToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-            this.nETVersionsToolStripMenuItem.Text = ".NET Versions";
-            this.nETVersionsToolStripMenuItem.Click += new System.EventHandler(this.nETVersionsToolStripMenuItem_Click);
-            // 
-            // mDACVersionsToolStripMenuItem
-            // 
-            this.mDACVersionsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("mDACVersionsToolStripMenuItem.Image")));
-            this.mDACVersionsToolStripMenuItem.Name = "mDACVersionsToolStripMenuItem";
-            this.mDACVersionsToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-            this.mDACVersionsToolStripMenuItem.Text = "MDAC Versions";
-            this.mDACVersionsToolStripMenuItem.Click += new System.EventHandler(this.mDACVersionsToolStripMenuItem_Click);
-            // 
-            // systemInformationToolStripMenuItem
-            // 
-            this.systemInformationToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("systemInformationToolStripMenuItem.Image")));
-            this.systemInformationToolStripMenuItem.Name = "systemInformationToolStripMenuItem";
-            this.systemInformationToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
-            this.systemInformationToolStripMenuItem.Text = "System Information";
-            this.systemInformationToolStripMenuItem.Click += new System.EventHandler(this.systemInformationToolStripMenuItem_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -1368,10 +1327,6 @@
         private MenuStrip menuStrip1;
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem exitToolStripMenuItem1;
-        private ToolStripMenuItem toolsToolStripMenuItem;
-        private ToolStripMenuItem nETVersionsToolStripMenuItem;
-        private ToolStripMenuItem mDACVersionsToolStripMenuItem;
-        private ToolStripMenuItem systemInformationToolStripMenuItem;
         private ToolStripMenuItem helpToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem;
         private TabControl tabControl1;

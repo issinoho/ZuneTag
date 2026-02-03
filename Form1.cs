@@ -50,52 +50,27 @@ namespace DrunkenBakery.ZuneTag
         private enum LogType
         {
             Success,
-
             Fail,
-
             Info
         }
 
         private const int ScreenRefresh = 1;
-
         private const int ScreenLines = 1000;
-
         private const string ThisApp = "Zune Tag Editor";
-
         private const string ThisPublisher = "The Drunken Bakery";
-
         private const ushort Stream = 65535;
-
         private const ushort NewStream = 0;
-
         private const ushort Language = 0;
-
         private const string TypeVideo = "BD-30-98-DB-B3-3A-AB-4F-8A-37-1A-99-5F-7F-F7-4B";
-
         private const string TypeMovie = "C9-7F-B8-A9-47-BD-F0-4B-AC-4F-65-5B-89-F7-D8-68";
-
         private const string TypeMusic = "E2-89-E6-E3-8C-BA-30-43-96-DF-A0-EE-EF-FA-68-76";
-
         private const string TypeTv = "8A-25-7F-BA-F7-62-A9-47-B2-1F-46-51-C4-2A-00-0E";
-
-        private Form frmNet;
-
-        private Form frmMdac;
-
-        private Form frmInfo;
-
         private Form frmAbout;
-
         private readonly List<ListViewItem> lvitems = new List<ListViewItem>();
-
         private readonly Timer screenLogTimer;
-
         private readonly TimerCallback screenLogTimerCallback;
-
         private readonly List<Attribute> attributes = new List<Attribute>();
-
         private ushort indexPrimaryVideo;
-
         private ushort indexSecondaryVideo;
 
         /// <summary>
@@ -395,39 +370,6 @@ namespace DrunkenBakery.ZuneTag
 
             // Return the new image dimensions
             return new Size((int) (currW * multiplier), (int) (currH * multiplier));
-        }
-
-        /// <summary>
-        /// Handles the Click event of the nETVersionsToolStripMenuItem control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void nETVersionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (this.frmNet == null) this.frmNet = new NETversions();
-            this.frmNet.ShowDialog();
-        }
-
-        /// <summary>
-        /// Handles the Click event of the mDACVersionsToolStripMenuItem control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void mDACVersionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (this.frmMdac == null) this.frmMdac = new MDACversions();
-            this.frmMdac.ShowDialog();
-        }
-
-        /// <summary>
-        /// Handles the Click event of the systemInformationToolStripMenuItem control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void systemInformationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (this.frmInfo == null) this.frmInfo = new SysInfo();
-            this.frmInfo.ShowDialog();
         }
 
         /// <summary>
@@ -1705,7 +1647,7 @@ namespace DrunkenBakery.ZuneTag
             }
 
             // Screen grab
-            //pictureBox1.Image = pbCover.Image;
+            pictureBox1.Image = pbCover.Image;
 
             // Switch back to the first tab to see the results
             this.AddLogEntry("Media file details updated.");
@@ -1790,7 +1732,7 @@ namespace DrunkenBakery.ZuneTag
             if (ext == ".wmv")
             {
                 this.lblMediaFile.Text = s[0];
-                this.RegisterNewMediaFileAsync();
+                _ = this.RegisterNewMediaFileAsync();
             }
             else
             {

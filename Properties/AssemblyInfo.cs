@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("The Drunken Bakery")]
 [assembly: AssemblyProduct("ZuneTag")]
-[assembly: AssemblyCopyright("Copyright © The Drunken Bakery 2009, 2023")]
+[assembly: AssemblyCopyright("Copyright © The Drunken Bakery 2009-")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

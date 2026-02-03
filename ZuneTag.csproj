@@ -220,18 +220,6 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="HexEncoding.cs" />
-    <Compile Include="MDACversions.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MDACversions.designer.cs">
-      <DependentUpon>MDACversions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="NETversions.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="NETversions.designer.cs">
-      <DependentUpon>NETversions.cs</DependentUpon>
-    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AboutBox1.resx">
@@ -240,19 +228,10 @@
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MDACversions.resx">
-      <DependentUpon>MDACversions.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="NETversions.resx">
-      <DependentUpon>NETversions.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="SysInfo.resx">
-      <DependentUpon>SysInfo.cs</DependentUpon>
     </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -269,12 +248,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <Compile Include="SysInfo.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SysInfo.designer.cs">
-      <DependentUpon>SysInfo.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
