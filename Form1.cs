@@ -15,8 +15,6 @@
 
 namespace DrunkenBakery.ZuneTag
 {
-    using DrunkenBakery.ZuneTag.Properties;
-
     using System;
     using System.Collections.Generic;
     using System.ComponentModel;
@@ -33,6 +31,8 @@ namespace DrunkenBakery.ZuneTag
     using System.Threading.Tasks;
     using System.Windows.Forms;
 
+    using DrunkenBakery.ZuneTag.Properties;
+
     using TMDbLib.Client;
     using TMDbLib.Objects.General;
     using TMDbLib.Objects.Search;
@@ -45,22 +45,10 @@ namespace DrunkenBakery.ZuneTag
     using Timer = System.Threading.Timer;
 
     /// <summary>
-    /// Main application form which drives all functionality.
+    ///     Main application form which drives all functionality.
     /// </summary>
     public partial class Form1 : Form
     {
-        /// <summary>
-        /// Severity of logging entry
-        /// </summary>
-        private enum LogType
-        {
-            Success,
-
-            Fail,
-
-            Info
-        }
-
         private const int ScreenRefresh = 1;
 
         private const int ScreenLines = 1000;
@@ -83,7 +71,7 @@ namespace DrunkenBakery.ZuneTag
 
         private const string TypeTv = "8A-25-7F-BA-F7-62-A9-47-B2-1F-46-51-C4-2A-00-0E";
 
-        private Form frmAbout;
+        private readonly List<Attribute> attributes = new List<Attribute>();
 
         private readonly List<ListViewItem> lvitems = new List<ListViewItem>();
 
@@ -91,14 +79,14 @@ namespace DrunkenBakery.ZuneTag
 
         private readonly TimerCallback screenLogTimerCallback;
 
-        private readonly List<Attribute> attributes = new List<Attribute>();
+        private Form frmAbout;
 
         private ushort indexPrimaryVideo;
 
         private ushort indexSecondaryVideo;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Form1"/> class.
+        ///     Initializes a new instance of the <see cref="Form1" /> class.
         /// </summary>
         public Form1()
         {
@@ -157,7 +145,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Initialises the media types.
+        ///     Initialises the media types.
         /// </summary>
         private void InitMediaTypes()
         {
@@ -171,7 +159,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Updates the status view by flushing the buffer.
+        ///     Updates the status view by flushing the buffer.
         /// </summary>
         /// <param name="sender">The sender.</param>
         private void _ScreenLogTimer_Elapsed(object sender)
@@ -181,7 +169,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Cycles the status view.
+        ///     Cycles the status view.
         /// </summary>
         private void CycleStatusView()
         {
@@ -190,10 +178,8 @@ namespace DrunkenBakery.ZuneTag
             this.ResumeOutput(this.lvStatus);
         }
 
-        private delegate void FlushOutputDelegate(ListView lv);
-
         /// <summary>
-        /// Flushes the output.
+        ///     Flushes the output.
         /// </summary>
         /// <param name="lv">The lv.</param>
         private void FlushOutput(ListView lv)
@@ -215,10 +201,8 @@ namespace DrunkenBakery.ZuneTag
             }
         }
 
-        private delegate void PauseOutputDelegate(ListView lv);
-
         /// <summary>
-        /// Pauses the output.
+        ///     Pauses the output.
         /// </summary>
         /// <param name="lv">The lv.</param>
         private void PauseOutput(ListView lv)
@@ -232,10 +216,8 @@ namespace DrunkenBakery.ZuneTag
             lv.BeginUpdate();
         }
 
-        private delegate void ResumeOutputDelegate(ListView lv);
-
         /// <summary>
-        /// Resumes the output.
+        ///     Resumes the output.
         /// </summary>
         /// <param name="lv">The lv.</param>
         private void ResumeOutput(ListView lv)
@@ -250,7 +232,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Initialises the event view.
+        ///     Initialises the event view.
         /// </summary>
         /// <param name="lvX">The lv X.</param>
         private void InitEventView(ListView lvX)
@@ -261,7 +243,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Adds the log entry.
+        ///     Adds the log entry.
         /// </summary>
         /// <param name="newEntry">The new entry.</param>
         /// <param name="whichLog">The which log.</param>
@@ -288,10 +270,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the Click event of the cmdBrowse control.
+        ///     Handles the Click event of the cmdBrowse control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void cmdBrowse_Click(object sender, EventArgs e)
         {
             // Get file
@@ -311,7 +293,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Registers the new media file.
+        ///     Registers the new media file.
         /// </summary>
         private async Task RegisterNewMediaFileAsync()
         {
@@ -344,7 +326,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Generates the image dimensions.
+        ///     Generates the image dimensions.
         /// </summary>
         /// <param name="currW">The curr W.</param>
         /// <param name="currH">The curr H.</param>
@@ -385,10 +367,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the Click event of the aboutToolStripMenuItem control.
+        ///     Handles the Click event of the aboutToolStripMenuItem control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (this.frmAbout == null) this.frmAbout = new AboutBox1();
@@ -396,17 +378,17 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the Click event of the exitToolStripMenuItem1 control.
+        ///     Handles the Click event of the exitToolStripMenuItem1 control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void exitToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
         /// <summary>
-        /// Inspects the file.
+        ///     Inspects the file.
         /// </summary>
         private void InspectFile()
         {
@@ -493,7 +475,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Creates a metadata editor and opens the file.
+        ///     Creates a metadata editor and opens the file.
         /// </summary>
         /// <param name="pwszInFile">The PWSZ in file.</param>
         /// <param name="ppEditor">The pp editor.</param>
@@ -518,7 +500,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Displays the specified attribute.
+        ///     Displays the specified attribute.
         /// </summary>
         /// <param name="wIndex">Index of the w.</param>
         /// <param name="wStream">The w stream.</param>
@@ -635,7 +617,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Displays all attributes for the specified stream.
+        ///     Displays all attributes for the specified stream.
         /// </summary>
         /// <param name="pwszFileName">Name of the PWSZ file.</param>
         /// <param name="wStreamNum">The w stream num.</param>
@@ -679,7 +661,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Displays all attributes for the specified stream, with support for GetAttributeByIndexEx.
+        ///     Displays all attributes for the specified stream, with support for GetAttributeByIndexEx.
         /// </summary>
         /// <param name="pwszFileName">Name of the PWSZ file.</param>
         /// <param name="wStreamNum">The w stream num.</param>
@@ -726,7 +708,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Delete the attribute at the specified index.
+        ///     Delete the attribute at the specified index.
         /// </summary>
         /// <param name="pwszFileName">Name of the PWSZ file.</param>
         /// <param name="wStreamNum">The w stream num.</param>
@@ -758,7 +740,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Converts attributes to byte arrays.
+        ///     Converts attributes to byte arrays.
         /// </summary>
         /// <param name="attribDataType">Type of the attrib data.</param>
         /// <param name="pwszValue">The PWSZ value.</param>
@@ -772,7 +754,7 @@ namespace DrunkenBakery.ZuneTag
                 case WMT_ATTR_DATATYPE.WMT_TYPE_DWORD:
 
                     nValueLength = 4;
-                    var pdwAttribValue = new uint[] { Convert.ToUInt32(pwszValue) };
+                    var pdwAttribValue = new[] { Convert.ToUInt32(pwszValue) };
 
                     pbValue = new byte[nValueLength];
                     Buffer.BlockCopy(pdwAttribValue, 0, pbValue, 0, nValueLength);
@@ -782,7 +764,7 @@ namespace DrunkenBakery.ZuneTag
                 case WMT_ATTR_DATATYPE.WMT_TYPE_WORD:
 
                     nValueLength = 2;
-                    var pwAttribValue = new ushort[] { Convert.ToUInt16(pwszValue) };
+                    var pwAttribValue = new[] { Convert.ToUInt16(pwszValue) };
 
                     pbValue = new byte[nValueLength];
                     Buffer.BlockCopy(pwAttribValue, 0, pbValue, 0, nValueLength);
@@ -792,7 +774,7 @@ namespace DrunkenBakery.ZuneTag
                 case WMT_ATTR_DATATYPE.WMT_TYPE_QWORD:
 
                     nValueLength = 8;
-                    var pqwAttribValue = new ulong[] { Convert.ToUInt64(pwszValue) };
+                    var pqwAttribValue = new[] { Convert.ToUInt64(pwszValue) };
 
                     pbValue = new byte[nValueLength];
                     Buffer.BlockCopy(pqwAttribValue, 0, pbValue, 0, nValueLength);
@@ -813,7 +795,7 @@ namespace DrunkenBakery.ZuneTag
                 case WMT_ATTR_DATATYPE.WMT_TYPE_BOOL:
 
                     nValueLength = 4;
-                    pdwAttribValue = new uint[] { Convert.ToUInt32(pwszValue) };
+                    pdwAttribValue = new[] { Convert.ToUInt32(pwszValue) };
                     if (pdwAttribValue[0] != 0) pdwAttribValue[0] = 1;
 
                     pbValue = new byte[nValueLength];
@@ -838,7 +820,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Set the specified attribute.
+        ///     Set the specified attribute.
         /// </summary>
         /// <param name="pwszFileName">Name of the PWSZ file.</param>
         /// <param name="wStreamNum">The w stream num.</param>
@@ -876,7 +858,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Add an attribute with the specifed language index.
+        ///     Add an attribute with the specifed language index.
         /// </summary>
         /// <param name="pwszFileName">Name of the PWSZ file.</param>
         /// <param name="wStreamNum">The w stream num.</param>
@@ -921,7 +903,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Modifies the value of the specified attribute.
+        ///     Modifies the value of the specified attribute.
         /// </summary>
         /// <param name="pwszFileName">Name of the PWSZ file.</param>
         /// <param name="wStreamNum">The w stream num.</param>
@@ -966,7 +948,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Attribs the exists.
+        ///     Attribs the exists.
         /// </summary>
         /// <param name="pwszFileName">Name of the PWSZ file.</param>
         /// <param name="wStreamNum">The w stream num.</param>
@@ -1019,10 +1001,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the 1 event of the cmdModify_Click control.
+        ///     Handles the 1 event of the cmdModify_Click control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void cmdModify_Click_1(object sender, EventArgs e)
         {
             if (!File.Exists(this.lblMediaFile.Text)) return;
@@ -1042,10 +1024,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the SelectedIndexChanged event of the cbAttributes control.
+        ///     Handles the SelectedIndexChanged event of the cbAttributes control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void cbAttributes_SelectedIndexChanged(object sender, EventArgs e)
         {
             var attribute = (Attribute)this.cbAttributes.SelectedItem;
@@ -1055,10 +1037,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the Click event of the cmdSave control.
+        ///     Handles the Click event of the cmdSave control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void cmdSave_Click(object sender, EventArgs e)
         {
             var newType = "";
@@ -1109,7 +1091,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Adds the missing attributes.
+        ///     Adds the missing attributes.
         /// </summary>
         private void AddMissingAttributes()
         {
@@ -1131,10 +1113,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the SelectedIndexChanged event of the cbMediaType control.
+        ///     Handles the SelectedIndexChanged event of the cbMediaType control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void cbMediaType_SelectedIndexChanged(object sender, EventArgs e)
         {
             switch (this.cbMediaType.SelectedIndex)
@@ -1181,7 +1163,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Loads the TV attributes.
+        ///     Loads the TV attributes.
         /// </summary>
         private void LoadTvAttributes()
         {
@@ -1236,7 +1218,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Loads the movie attributes.
+        ///     Loads the movie attributes.
         /// </summary>
         private void LoadMovieAttributes()
         {
@@ -1279,7 +1261,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Loads the video attributes.
+        ///     Loads the video attributes.
         /// </summary>
         private void LoadVideoAttributes()
         {
@@ -1314,7 +1296,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Loads the music attributes.
+        ///     Loads the music attributes.
         /// </summary>
         private void LoadMusicAttributes()
         {
@@ -1357,10 +1339,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the Click event of the cmdTVSave control.
+        ///     Handles the Click event of the cmdTVSave control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void cmdTVSave_Click(object sender, EventArgs e)
         {
             this.EditAttribute("Title", this.txtTVTitle.Text);
@@ -1379,7 +1361,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Modifies the attribute.
+        ///     Modifies the attribute.
         /// </summary>
         /// <param name="theAttribute">The attribute.</param>
         /// <param name="newValue">The new value.</param>
@@ -1393,10 +1375,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the Click event of the cmdMovieSave control.
+        ///     Handles the Click event of the cmdMovieSave control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void cmdMovieSave_Click(object sender, EventArgs e)
         {
             this.EditAttribute("Title", this.txtMovieTitle.Text);
@@ -1412,10 +1394,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the Click event of the cmdMusicSave control.
+        ///     Handles the Click event of the cmdMusicSave control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void cmdMusicSave_Click(object sender, EventArgs e)
         {
             this.EditAttribute("Title", this.txtMusicTitle.Text);
@@ -1431,10 +1413,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the Click event of the cmdVideoSave control.
+        ///     Handles the Click event of the cmdVideoSave control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void cmdVideoSave_Click(object sender, EventArgs e)
         {
             this.EditAttribute("Title", this.txtVideoTitle.Text);
@@ -1448,10 +1430,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the Click event of the cmdAmazonSearch control.
+        ///     Handles the Click event of the cmdAmazonSearch control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void cmdAmazonSearch_Click(object sender, EventArgs e)
         {
             // Set up visuals pre-search
@@ -1467,7 +1449,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Sets the buttons.
+        ///     Sets the buttons.
         /// </summary>
         /// <param name="isOn">if set to <c>true</c> [is ON].</param>
         private void SetButtons(bool isOn)
@@ -1476,7 +1458,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Shows the cover art.
+        ///     Shows the cover art.
         /// </summary>
         /// <param name="coverUrl">The URL of the cover art.</param>
         private void ShowCoverArt(string coverUrl)
@@ -1491,20 +1473,20 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the KeyDown event of the txtSearchCriteria control.
+        ///     Handles the KeyDown event of the txtSearchCriteria control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.Windows.Forms.KeyEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.Windows.Forms.KeyEventArgs" /> instance containing the event data.</param>
         private void txtSearchCriteria_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter) this.cmdAmazonSearch_Click(sender, e);
         }
 
         /// <summary>
-        /// Handles the SelectedIndexChanged event of the lbResults control.
+        ///     Handles the SelectedIndexChanged event of the lbResults control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void lbResults_SelectedIndexChanged(object sender, EventArgs e)
         {
             var entry = (AmazonEntry)this.lbResults.SelectedItem;
@@ -1541,10 +1523,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the Click event of the cmdCopyAz control.
+        ///     Handles the Click event of the cmdCopyAz control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void cmdCopyAz_Click(object sender, EventArgs e)
         {
             if (this.lbResults.SelectedItem == null) return;
@@ -1610,10 +1592,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the DoWork event of the backgroundWorker1 control.
+        ///     Handles the DoWork event of the backgroundWorker1 control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.ComponentModel.DoWorkEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.ComponentModel.DoWorkEventArgs" /> instance containing the event data.</param>
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
             if (this.backgroundWorker1.CancellationPending)
@@ -1634,10 +1616,13 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the RunWorkerCompleted event of the backgroundWorker1 control.
+        ///     Handles the RunWorkerCompleted event of the backgroundWorker1 control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.ComponentModel.RunWorkerCompletedEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">
+        ///     The <see cref="System.ComponentModel.RunWorkerCompletedEventArgs" /> instance containing the event
+        ///     data.
+        /// </param>
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             // Check for errors
@@ -1666,10 +1651,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the DragDrop event of the lblMediaFile control.
+        ///     Handles the DragDrop event of the lblMediaFile control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.Windows.Forms.DragEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.Windows.Forms.DragEventArgs" /> instance containing the event data.</param>
         private void lblMediaFile_DragDrop(object sender, DragEventArgs e)
         {
             var s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
@@ -1687,20 +1672,20 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the DragEnter event of the lblMediaFile control.
+        ///     Handles the DragEnter event of the lblMediaFile control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.Windows.Forms.DragEventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.Windows.Forms.DragEventArgs" /> instance containing the event data.</param>
         private void lblMediaFile_DragEnter(object sender, DragEventArgs e)
         {
             e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.All : DragDropEffects.None;
         }
 
         /// <summary>
-        /// Handles the Click event of the cmdReset control.
+        ///     Handles the Click event of the cmdReset control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void cmdReset_Click(object sender, EventArgs e)
         {
             // Delete the main keys
@@ -1725,10 +1710,10 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Handles the double-click event of the Listbox
+        ///     Handles the double-click event of the Listbox
         /// </summary>
         /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void lbResults_DoubleClick(object sender, EventArgs e)
         {
             if (this.lbResults.SelectedItem == null) return;
@@ -1738,7 +1723,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Edits the picture.
+        ///     Edits the picture.
         /// </summary>
         [HandleProcessCorruptedStateExceptions]
         private void EditPicture(PictureBox myPicture)
@@ -1777,7 +1762,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Captures the form closing event.
+        ///     Captures the form closing event.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The instance containing the event data</param>
@@ -1793,5 +1778,23 @@ namespace DrunkenBakery.ZuneTag
                 this.AddLogEntry(f.Message, LogType.Fail);
             }
         }
+
+        /// <summary>
+        ///     Severity of logging entry
+        /// </summary>
+        private enum LogType
+        {
+            Success,
+
+            Fail,
+
+            Info
+        }
+
+        private delegate void FlushOutputDelegate(ListView lv);
+
+        private delegate void PauseOutputDelegate(ListView lv);
+
+        private delegate void ResumeOutputDelegate(ListView lv);
     }
 }

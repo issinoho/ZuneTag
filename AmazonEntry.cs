@@ -19,6 +19,13 @@ namespace DrunkenBakery.ZuneTag
 
     internal class AmazonEntry
     {
+        public AmazonEntry()
+        {
+            this.ExtraData = false;
+            this.Genre = "unknown";
+            this.Director = "unknown";
+        }
+
         public SearchMovie Movie
         {
             get;
@@ -47,13 +54,6 @@ namespace DrunkenBakery.ZuneTag
         {
             get;
             set;
-        }
-
-        public AmazonEntry()
-        {
-            this.ExtraData = false;
-            this.Genre = "unknown";
-            this.Director = "unknown";
         }
 
         public override string ToString()

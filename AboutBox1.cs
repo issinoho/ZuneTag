@@ -21,12 +21,12 @@ namespace DrunkenBakery.ZuneTag
     using System.Windows.Forms;
 
     /// <summary>
-    /// Standard Cygnet About box.
+    ///     Standard Cygnet About box.
     /// </summary>
     internal partial class AboutBox1 : Form
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="AboutBox1"/> class.
+        ///     Initializes a new instance of the <see cref="AboutBox1" /> class.
         /// </summary>
         public AboutBox1()
         {
@@ -51,10 +51,20 @@ namespace DrunkenBakery.ZuneTag
             foreach (var myRef in refs) this.textBoxDescription.AppendText(Environment.NewLine + myRef.Name + " v" + myRef.Version);
         }
 
+        /// <summary>
+        ///     Handles the Click event of the okButton control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private void OkButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
         #region Assembly Attribute Accessors
 
         /// <summary>
-        /// Gets the assembly title.
+        ///     Gets the assembly title.
         /// </summary>
         /// <value>The assembly title.</value>
         public string AssemblyTitle
@@ -80,13 +90,13 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Gets the assembly version.
+        ///     Gets the assembly version.
         /// </summary>
         /// <value>The assembly version.</value>
         public string AssemblyVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         /// <summary>
-        /// Gets the assembly description.
+        ///     Gets the assembly description.
         /// </summary>
         /// <value>The assembly description.</value>
         public string AssemblyDescription
@@ -105,7 +115,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Gets the assembly product.
+        ///     Gets the assembly product.
         /// </summary>
         /// <value>The assembly product.</value>
         public string AssemblyProduct
@@ -124,7 +134,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Gets the assembly copyright.
+        ///     Gets the assembly copyright.
         /// </summary>
         /// <value>The assembly copyright.</value>
         public string AssemblyCopyright
@@ -143,7 +153,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Gets the assembly company.
+        ///     Gets the assembly company.
         /// </summary>
         /// <value>The assembly company.</value>
         public string AssemblyCompany
@@ -162,15 +172,5 @@ namespace DrunkenBakery.ZuneTag
         }
 
         #endregion
-
-        /// <summary>
-        /// Handles the Click event of the okButton control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-        private void OkButton_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
     }
 }

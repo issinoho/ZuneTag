@@ -20,12 +20,12 @@ namespace DrunkenBakery.ZuneTag
     using System.Linq;
 
     /// <summary>
-    /// Summary description for HexEncoding.
+    ///     Summary description for HexEncoding.
     /// </summary>
     public class HexEncoding
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="HexEncoding"/> class.
+        ///     Initializes a new instance of the <see cref="HexEncoding" /> class.
         /// </summary>
         public HexEncoding()
         {
@@ -35,7 +35,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Gets the byte count.
+        ///     Gets the byte count.
         /// </summary>
         /// <param name="hexString">The hex string.</param>
         /// <returns></returns>
@@ -51,9 +51,9 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Creates a byte array from the hexadecimal string. Each two characters are combined
-        /// to create one byte. First two hexadecimal characters become first byte in returned array.
-        /// Non-hexadecimal characters are ignored. 
+        ///     Creates a byte array from the hexadecimal string. Each two characters are combined
+        ///     to create one byte. First two hexadecimal characters become first byte in returned array.
+        ///     Non-hexadecimal characters are ignored.
         /// </summary>
         /// <param name="hexString">string to convert to byte array</param>
         /// <param name="discarded">number of characters in string ignored</param>
@@ -90,7 +90,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Toes the string.
+        ///     Toes the string.
         /// </summary>
         /// <param name="bytes">The bytes.</param>
         /// <returns></returns>
@@ -100,7 +100,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Determines if given string is in proper hexadecimal string format
+        ///     Determines if given string is in proper hexadecimal string format
         /// </summary>
         /// <param name="hexString"></param>
         /// <returns></returns>
@@ -110,7 +110,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Returns true is c is a hexadecimal digit (A-F, a-f, 0-9)
+        ///     Returns true is c is a hexadecimal digit (A-F, a-f, 0-9)
         /// </summary>
         /// <param name="c">Character to test</param>
         /// <returns>true if hex digit, false if not</returns>
@@ -126,7 +126,7 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        /// Converts 1 or 2 character string into equivalent byte value
+        ///     Converts 1 or 2 character string into equivalent byte value
         /// </summary>
         /// <param name="hex">1 or 2 character string</param>
         /// <returns>byte</returns>
