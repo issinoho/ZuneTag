@@ -45,10 +45,7 @@ namespace DrunkenBakery.ZuneTag
             var numHexChars = hexString.Count(IsHexDigit);
 
             // If odd number of characters, discard last character
-            if (numHexChars % 2 != 0)
-            {
-                numHexChars--;
-            }
+            if (numHexChars % 2 != 0) numHexChars--;
 
             return numHexChars / 2; // 2 characters per byte
         }
@@ -67,12 +64,10 @@ namespace DrunkenBakery.ZuneTag
             var newString = "";
             // Remove all none A-F, 0-9, characters
             foreach (var t in hexString)
-            {
                 if (IsHexDigit(t))
                     newString += t;
                 else
                     discarded++;
-            }
 
             // If odd number of characters, discard last character
             if (newString.Length % 2 != 0)

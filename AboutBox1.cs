@@ -38,9 +38,9 @@ namespace DrunkenBakery.ZuneTag
             // Change assembly information settings for your application through either:
             // - Project->Properties->Application->Assembly Information
             // - AssemblyInfo.cs
-            this.Text = String.Format("About {0}", this.AssemblyTitle);
+            this.Text = string.Format("About {0}", this.AssemblyTitle);
             this.labelProductName.Text = this.AssemblyProduct + " - " + this.AssemblyTitle;
-            this.labelVersion.Text = String.Format("Version {0}", this.AssemblyVersion);
+            this.labelVersion.Text = string.Format("Version {0}", this.AssemblyVersion);
             this.labelCopyright.Text = this.AssemblyCopyright + DateTime.Today.Year;
             this.labelCompanyName.Text = this.AssemblyCompany;
             this.textBoxDescription.Text = this.AssemblyDescription + Environment.NewLine + Environment.NewLine + "Compiled on .NET " + asm.ImageRuntimeVersion + Environment.NewLine + "Running on .NET v" + Environment.Version + Environment.NewLine;
@@ -48,10 +48,7 @@ namespace DrunkenBakery.ZuneTag
             // Use Reflection to get a list of depenedent assemblies
             this.textBoxDescription.AppendText(Environment.NewLine + "Dependent Assemblies:");
             var refs = asm.GetReferencedAssemblies();
-            foreach (var myRef in refs)
-            {
-                this.textBoxDescription.AppendText(Environment.NewLine + myRef.Name + " v" + myRef.Version);
-            }
+            foreach (var myRef in refs) this.textBoxDescription.AppendText(Environment.NewLine + myRef.Name + " v" + myRef.Version);
         }
 
         #region Assembly Attribute Accessors
@@ -74,10 +71,7 @@ namespace DrunkenBakery.ZuneTag
                     var titleAttribute = (AssemblyTitleAttribute)attributes[0];
 
                     // If it is not an empty string, return it
-                    if (titleAttribute.Title != string.Empty)
-                    {
-                        return titleAttribute.Title;
-                    }
+                    if (titleAttribute.Title != string.Empty) return titleAttribute.Title;
                 }
 
                 // If there was no Title attribute, or if the Title attribute was the empty string, return the .exe name
@@ -89,13 +83,7 @@ namespace DrunkenBakery.ZuneTag
         /// Gets the assembly version.
         /// </summary>
         /// <value>The assembly version.</value>
-        public string AssemblyVersion
-        {
-            get
-            {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            }
-        }
+        public string AssemblyVersion => Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         /// <summary>
         /// Gets the assembly description.
@@ -109,10 +97,7 @@ namespace DrunkenBakery.ZuneTag
                 var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
 
                 // If there aren't any Description attributes, return an empty string
-                if (attributes.Length == 0)
-                {
-                    return string.Empty;
-                }
+                if (attributes.Length == 0) return string.Empty;
 
                 // If there is a Description attribute, return its value
                 return ((AssemblyDescriptionAttribute)attributes[0]).Description;
@@ -131,10 +116,7 @@ namespace DrunkenBakery.ZuneTag
                 var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
 
                 // If there aren't any Product attributes, return an empty string
-                if (attributes.Length == 0)
-                {
-                    return string.Empty;
-                }
+                if (attributes.Length == 0) return string.Empty;
 
                 // If there is a Product attribute, return its value
                 return ((AssemblyProductAttribute)attributes[0]).Product;
@@ -153,10 +135,7 @@ namespace DrunkenBakery.ZuneTag
                 var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
 
                 // If there aren't any Copyright attributes, return an empty string
-                if (attributes.Length == 0)
-                {
-                    return string.Empty;
-                }
+                if (attributes.Length == 0) return string.Empty;
 
                 // If there is a Copyright attribute, return its value
                 return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
@@ -175,10 +154,7 @@ namespace DrunkenBakery.ZuneTag
                 var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
 
                 // If there aren't any Company attributes, return an empty string
-                if (attributes.Length == 0)
-                {
-                    return string.Empty;
-                }
+                if (attributes.Length == 0) return string.Empty;
 
                 // If there is a Company attribute, return its value
                 return ((AssemblyCompanyAttribute)attributes[0]).Company;

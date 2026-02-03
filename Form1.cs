@@ -315,8 +315,8 @@ namespace DrunkenBakery.ZuneTag
         /// </summary>
         private async Task RegisterNewMediaFileAsync()
         {
-            string input = this.lblMediaFile.Text;
-            string output = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".png");
+            var input = this.lblMediaFile.Text;
+            var output = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".png");
 
             if (!File.Exists(input))
             {
@@ -325,8 +325,8 @@ namespace DrunkenBakery.ZuneTag
             }
 
             // Grab still frame, if possible
-            IConversion conversion = await FFmpeg.Conversions.FromSnippet.Snapshot(input, output, TimeSpan.FromSeconds(1));
-            IConversionResult result = await conversion.Start();
+            var conversion = await FFmpeg.Conversions.FromSnippet.Snapshot(input, output, TimeSpan.FromSeconds(1));
+            var result = await conversion.Start();
 
             // Load frame into PB
             var fs = new FileStream(output, FileMode.Open, FileAccess.Read);
@@ -365,29 +365,17 @@ namespace DrunkenBakery.ZuneTag
             {
                 case "portrait":
                     // Calculate multiplier on heights
-                    if (destH > destW)
-                    {
-                        multiplier = destW / (double)currW;
-                    }
+                    if (destH > destW) multiplier = destW / (double)currW;
 
-                    else
-                    {
-                        multiplier = destH / (double)currH;
-                    }
+                    else multiplier = destH / (double)currH;
 
                     break;
 
                 case "landscape":
                     // Calculate multiplier on widths
-                    if (destH > destW)
-                    {
-                        multiplier = destW / (double)currW;
-                    }
+                    if (destH > destW) multiplier = destW / (double)currW;
 
-                    else
-                    {
-                        multiplier = destH / (double)currH;
-                    }
+                    else multiplier = destH / (double)currH;
 
                     break;
             }
@@ -452,7 +440,6 @@ namespace DrunkenBakery.ZuneTag
                     this.indexSecondaryVideo = u.Index;
 
                     if (isVideo)
-                    {
                         switch (u.Value)
                         {
                             case TypeMovie:
@@ -467,7 +454,6 @@ namespace DrunkenBakery.ZuneTag
                                 thisIndex = 4;
                                 break;
                         }
-                    }
                 }
             }
 
@@ -573,12 +559,8 @@ namespace DrunkenBakery.ZuneTag
                             pwszValue = "\"UTF-16LE BOM+\"";
 
                             if (4 <= dwValueLen)
-                            {
                                 for (var i = 0; i < pbValue.Length - 2; i += 2)
-                                {
                                     pwszValue += Convert.ToString(BitConverter.ToChar(pbValue, i));
-                                }
-                            }
 
                             pwszValue = pwszValue + "\"";
                         }
@@ -586,12 +568,8 @@ namespace DrunkenBakery.ZuneTag
                         {
                             pwszValue = "\"UTF-16BE BOM+\"";
                             if (4 <= dwValueLen)
-                            {
                                 for (var i = 0; i < pbValue.Length - 2; i += 2)
-                                {
                                     pwszValue += Convert.ToString(BitConverter.ToChar(pbValue, i));
-                                }
-                            }
 
                             pwszValue = pwszValue + "\"";
                         }
@@ -599,12 +577,8 @@ namespace DrunkenBakery.ZuneTag
                         {
                             pwszValue = "\"";
                             if (2 <= dwValueLen)
-                            {
                                 for (var i = 0; i < pbValue.Length - 2; i += 2)
-                                {
                                     pwszValue += Convert.ToString(BitConverter.ToChar(pbValue, i));
-                                }
-                            }
 
                             pwszValue += "\"";
                         }
@@ -688,7 +662,7 @@ namespace DrunkenBakery.ZuneTag
                     headerInfo3.GetAttributeByIndex(wAttribIndex, ref wStreamNum, pwszAttribName, ref wAttribNameLen, out var wAttribType, pbAttribValue, ref wAttribValueLen);
 
                     pbAttribValue = new byte[wAttribValueLen];
-                    pwszAttribName = new String((char)0, wAttribNameLen);
+                    pwszAttribName = new string((char)0, wAttribNameLen);
 
                     headerInfo3.GetAttributeByIndex(wAttribIndex, ref wStreamNum, pwszAttribName, ref wAttribNameLen, out wAttribType, pbAttribValue, ref wAttribValueLen);
 
@@ -731,7 +705,7 @@ namespace DrunkenBakery.ZuneTag
 
                     headerInfo3.GetAttributeByIndexEx(wStreamNum, wAttribIndex, pwszAttribName, ref wAttribNameLen, out var wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
 
-                    pwszAttribName = new String((char)0, wAttribNameLen);
+                    pwszAttribName = new string((char)0, wAttribNameLen);
                     pbAttribValue = new byte[dwAttribValueLen];
 
                     headerInfo3.GetAttributeByIndexEx(wStreamNum, wAttribIndex, pwszAttribName, ref wAttribNameLen, out wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
@@ -800,7 +774,7 @@ namespace DrunkenBakery.ZuneTag
                     nValueLength = 4;
                     var pdwAttribValue = new uint[] { Convert.ToUInt32(pwszValue) };
 
-                    pbValue = new Byte[nValueLength];
+                    pbValue = new byte[nValueLength];
                     Buffer.BlockCopy(pdwAttribValue, 0, pbValue, 0, nValueLength);
 
                     return true;
@@ -810,7 +784,7 @@ namespace DrunkenBakery.ZuneTag
                     nValueLength = 2;
                     var pwAttribValue = new ushort[] { Convert.ToUInt16(pwszValue) };
 
-                    pbValue = new Byte[nValueLength];
+                    pbValue = new byte[nValueLength];
                     Buffer.BlockCopy(pwAttribValue, 0, pbValue, 0, nValueLength);
 
                     return true;
@@ -820,7 +794,7 @@ namespace DrunkenBakery.ZuneTag
                     nValueLength = 8;
                     var pqwAttribValue = new ulong[] { Convert.ToUInt64(pwszValue) };
 
-                    pbValue = new Byte[nValueLength];
+                    pbValue = new byte[nValueLength];
                     Buffer.BlockCopy(pqwAttribValue, 0, pbValue, 0, nValueLength);
 
                     return true;
@@ -828,7 +802,7 @@ namespace DrunkenBakery.ZuneTag
                 case WMT_ATTR_DATATYPE.WMT_TYPE_STRING:
 
                     nValueLength = (ushort)((pwszValue.Length + 1) * 2);
-                    pbValue = new Byte[nValueLength];
+                    pbValue = new byte[nValueLength];
 
                     Buffer.BlockCopy(pwszValue.ToCharArray(), 0, pbValue, 0, pwszValue.Length * 2);
                     pbValue[nValueLength - 2] = 0;
@@ -840,12 +814,9 @@ namespace DrunkenBakery.ZuneTag
 
                     nValueLength = 4;
                     pdwAttribValue = new uint[] { Convert.ToUInt32(pwszValue) };
-                    if (pdwAttribValue[0] != 0)
-                    {
-                        pdwAttribValue[0] = 1;
-                    }
+                    if (pdwAttribValue[0] != 0) pdwAttribValue[0] = 1;
 
-                    pbValue = new Byte[nValueLength];
+                    pbValue = new byte[nValueLength];
                     Buffer.BlockCopy(pdwAttribValue, 0, pbValue, 0, nValueLength);
 
                     return true;
@@ -881,10 +852,7 @@ namespace DrunkenBakery.ZuneTag
             {
                 var attribDataType = (WMT_ATTR_DATATYPE)wAttribType;
 
-                if (!this.TranslateAttrib(attribDataType, pwszAttribValue, out var pbAttribValue, out var nAttribValueLen))
-                {
-                    return false;
-                }
+                if (!this.TranslateAttrib(attribDataType, pwszAttribValue, out var pbAttribValue, out var nAttribValueLen)) return false;
 
                 WMFSDKFunctions.WMCreateEditor(out var MetadataEditor);
 
@@ -925,10 +893,7 @@ namespace DrunkenBakery.ZuneTag
 
             try
             {
-                if (!this.TranslateAttrib(attribDataType, pwszAttribValue, out var pbAttribValue, out var nAttribValueLen))
-                {
-                    return false;
-                }
+                if (!this.TranslateAttrib(attribDataType, pwszAttribValue, out var pbAttribValue, out var nAttribValueLen)) return false;
 
                 WMFSDKFunctions.WMCreateEditor(out metadataEditor);
 
@@ -973,10 +938,7 @@ namespace DrunkenBakery.ZuneTag
 
             try
             {
-                if (!this.TranslateAttrib(attribDataType, pwszAttribValue, out var pbAttribValue, out var nAttribValueLen))
-                {
-                    return false;
-                }
+                if (!this.TranslateAttrib(attribDataType, pwszAttribValue, out var pbAttribValue, out var nAttribValueLen)) return false;
 
                 WMFSDKFunctions.WMCreateEditor(out metadataEditor);
 
@@ -1036,15 +998,12 @@ namespace DrunkenBakery.ZuneTag
 
                     headerInfo3.GetAttributeByIndexEx(wStreamNum, wAttribIndex, pwszAttribName, ref wAttribNameLen, out _, out _, pbAttribValue, ref dwAttribValueLen);
 
-                    pwszAttribName = new String((char)0, wAttribNameLen);
+                    pwszAttribName = new string((char)0, wAttribNameLen);
                     pbAttribValue = new byte[dwAttribValueLen];
 
                     headerInfo3.GetAttributeByIndexEx(wStreamNum, wAttribIndex, pwszAttribName, ref wAttribNameLen, out _, out _, pbAttribValue, ref dwAttribValueLen);
 
-                    if (pwszAttribName.Substring(0, pwszAttribName.Length - 1) == searchAttrib)
-                    {
-                        isFound = true;
-                    }
+                    if (pwszAttribName.Substring(0, pwszAttribName.Length - 1) == searchAttrib) isFound = true;
                 }
 
                 // Close file
@@ -1066,26 +1025,14 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
         private void cmdModify_Click_1(object sender, EventArgs e)
         {
-            if (!File.Exists(this.lblMediaFile.Text))
-            {
-                return;
-            }
+            if (!File.Exists(this.lblMediaFile.Text)) return;
 
-            if (this.cbAttributes.SelectedItem == null)
-            {
-                return;
-            }
+            if (this.cbAttributes.SelectedItem == null) return;
 
-            if (this.txtNewValue.Text.Length == 0)
-            {
-                return;
-            }
+            if (this.txtNewValue.Text.Length == 0) return;
 
             var attribute = (Attribute)this.cbAttributes.SelectedItem;
-            if (attribute == null)
-            {
-                return;
-            }
+            if (attribute == null) return;
 
             if (this.ModifyAttrib(this.lblMediaFile.Text, Stream, attribute.Index, Convert.ToUInt16(attribute.Type), this.txtNewValue.Text, Language))
             {
@@ -1102,10 +1049,7 @@ namespace DrunkenBakery.ZuneTag
         private void cbAttributes_SelectedIndexChanged(object sender, EventArgs e)
         {
             var attribute = (Attribute)this.cbAttributes.SelectedItem;
-            if (attribute == null)
-            {
-                return;
-            }
+            if (attribute == null) return;
 
             this.txtNewValue.Text = attribute.Value;
         }
@@ -1119,10 +1063,7 @@ namespace DrunkenBakery.ZuneTag
         {
             var newType = "";
 
-            if (!File.Exists(this.lblMediaFile.Text))
-            {
-                return;
-            }
+            if (!File.Exists(this.lblMediaFile.Text)) return;
 
             switch (this.cbMediaType.SelectedIndex)
             {
@@ -1172,10 +1113,7 @@ namespace DrunkenBakery.ZuneTag
         /// </summary>
         private void AddMissingAttributes()
         {
-            if (!this.AttribExists(this.lblMediaFile.Text, Stream, "WM/MediaClassPrimaryID"))
-            {
-                this.AddAttrib(this.lblMediaFile.Text, NewStream, "WM/MediaClassPrimaryID", Convert.ToUInt16(WMT_ATTR_DATATYPE.WMT_TYPE_GUID), TypeVideo, Language);
-            }
+            if (!this.AttribExists(this.lblMediaFile.Text, Stream, "WM/MediaClassPrimaryID")) this.AddAttrib(this.lblMediaFile.Text, NewStream, "WM/MediaClassPrimaryID", Convert.ToUInt16(WMT_ATTR_DATATYPE.WMT_TYPE_GUID), TypeVideo, Language);
 
             if (!this.AttribExists(this.lblMediaFile.Text, Stream, "WM/MediaClassSecondaryID")) this.AddAttrib(this.lblMediaFile.Text, NewStream, "WM/MediaClassSecondaryID", Convert.ToUInt16(WMT_ATTR_DATATYPE.WMT_TYPE_GUID), TypeVideo, Language);
             if (!this.AttribExists(this.lblMediaFile.Text, Stream, "Title")) this.AddAttrib(this.lblMediaFile.Text, NewStream, "Title", Convert.ToUInt16(WMT_ATTR_DATATYPE.WMT_TYPE_STRING), "Unknown", Language);
@@ -1435,7 +1373,7 @@ namespace DrunkenBakery.ZuneTag
             this.EditAttribute("WM/TVNetworkAffiliation", this.txtTVNetwork.Text);
             this.EditAttribute("WM/Genre", this.txtTVGenre.Text);
             this.EditAttribute("WM/TrackNumber", this.txtTVTrack.Text);
-            this.EditPicture(pictureBox1);
+            this.EditPicture(this.pictureBox1);
             this.AddLogEntry(this.lblMediaFile.Text + " successfully modified");
             this.InspectFile();
         }
@@ -1468,7 +1406,7 @@ namespace DrunkenBakery.ZuneTag
             this.EditAttribute("WM/OriginalBroadcastDateTime", this.txtMovieDate.Text);
             this.EditAttribute("WM/ParentalRating", this.txtMovieRating.Text);
             this.EditAttribute("WM/Genre", this.txtMovieGenre.Text);
-            this.EditPicture(pictureBox1);
+            this.EditPicture(this.pictureBox1);
             this.AddLogEntry(this.lblMediaFile.Text + " successfully modified");
             this.InspectFile();
         }
@@ -1487,7 +1425,7 @@ namespace DrunkenBakery.ZuneTag
             this.EditAttribute("WM/OriginalBroadcastDateTime", this.txtMusicDate.Text);
             this.EditAttribute("WM/ParentalRating", this.txtMusicRating.Text);
             this.EditAttribute("WM/Genre", this.txtMusicGenre.Text);
-            this.EditPicture(pictureBox1);
+            this.EditPicture(this.pictureBox1);
             this.AddLogEntry(this.lblMediaFile.Text + " successfully modified");
             this.InspectFile();
         }
@@ -1504,7 +1442,7 @@ namespace DrunkenBakery.ZuneTag
             this.EditAttribute("Author", this.txtVideoAuthor.Text);
             this.EditAttribute("WM/Year", this.txtVideoYear.Text);
             this.EditAttribute("WM/Genre", this.txtVideoGenre.Text);
-            this.EditPicture(pictureBox1);
+            this.EditPicture(this.pictureBox1);
             this.AddLogEntry(this.lblMediaFile.Text + " successfully modified");
             this.InspectFile();
         }
@@ -1559,10 +1497,7 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="e">The <see cref="System.Windows.Forms.KeyEventArgs"/> instance containing the event data.</param>
         private void txtSearchCriteria_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
-            {
-                this.cmdAmazonSearch_Click(sender, e);
-            }
+            if (e.KeyCode == Keys.Enter) this.cmdAmazonSearch_Click(sender, e);
         }
 
         /// <summary>
@@ -1573,10 +1508,7 @@ namespace DrunkenBakery.ZuneTag
         private void lbResults_SelectedIndexChanged(object sender, EventArgs e)
         {
             var entry = (AmazonEntry)this.lbResults.SelectedItem;
-            if (entry == null)
-            {
-                return;
-            }
+            if (entry == null) return;
 
             // If not already retrieved, get additional data
             if (!entry.ExtraData)
@@ -1591,13 +1523,11 @@ namespace DrunkenBakery.ZuneTag
 
                 var credits = client.GetMovieCreditsAsync(entry.Movie.Id).Result;
                 if (credits != null)
-                {
                     foreach (var credit in credits.Crew.Where(credit => credit.Department == "Directing"))
                     {
                         entry.Director = credit.Name;
                         break;
                     }
-                }
 
                 entry.ExtraData = true;
             }
@@ -1672,7 +1602,7 @@ namespace DrunkenBakery.ZuneTag
             }
 
             // Screen grab
-            pictureBox1.Image = pbCover.Image;
+            this.pictureBox1.Image = this.pbCover.Image;
 
             // Switch back to the first tab to see the results
             this.AddLogEntry("Media file details updated.");
@@ -1711,10 +1641,7 @@ namespace DrunkenBakery.ZuneTag
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             // Check for errors
-            if (e.Cancelled)
-            {
-                return;
-            }
+            if (e.Cancelled) return;
 
             if (e.Error != null)
             {
@@ -1722,20 +1649,14 @@ namespace DrunkenBakery.ZuneTag
                 return;
             }
 
-            if (e.Result == null)
-            {
-                return;
-            }
+            if (e.Result == null) return;
 
             // Display results
             var results = (SearchContainer<SearchMovie>)e.Result;
             foreach (var entry in results.Results.Select(result => new AmazonEntry
                      {
                          Movie = result
-                     }))
-            {
-                this.lbResults.Items.Add(entry);
-            }
+                     })) this.lbResults.Items.Add(entry);
 
             // Visuals
             this.Cursor = Cursors.Default;
@@ -1813,10 +1734,7 @@ namespace DrunkenBakery.ZuneTag
             if (this.lbResults.SelectedItem == null) return;
 
             var entry = (AmazonEntry)this.lbResults.SelectedItem;
-            if (entry?.Url.Length > 0)
-            {
-                Process.Start(entry.Url);
-            }
+            if (entry?.Url.Length > 0) Process.Start(entry.Url);
         }
 
         /// <summary>
@@ -1830,7 +1748,7 @@ namespace DrunkenBakery.ZuneTag
 
             try
             {
-                WMPicture picture = new WMPicture
+                var picture = new WMPicture
                 {
                     pwszMIMEType = Marshal.StringToCoTaskMemUni("image/jpeg\0"),
                     pwszDescription = Marshal.StringToCoTaskMemUni("AlbumArt\0"),
@@ -1838,15 +1756,15 @@ namespace DrunkenBakery.ZuneTag
                 };
 
                 var tempFilePath = AppContext.BaseDirectory + Settings.Default.TemporaryFile;
-                byte[] data = File.ReadAllBytes(tempFilePath);
+                var data = File.ReadAllBytes(tempFilePath);
                 picture.dwDataLen = data.Length;
                 picture.pbData = Marshal.AllocCoTaskMem(picture.dwDataLen);
                 Marshal.Copy(data, 0, picture.pbData, picture.dwDataLen);
-                IntPtr pictureParam = Marshal.AllocCoTaskMem(Marshal.SizeOf(picture));
+                var pictureParam = Marshal.AllocCoTaskMem(Marshal.SizeOf(picture));
                 Marshal.StructureToPtr(picture, pictureParam, false);
 
                 WMFSDKFunctions.WMCreateEditor(out MetadataEditor);
-                MetadataEditor.Open(lblMediaFile.Text);
+                MetadataEditor.Open(this.lblMediaFile.Text);
                 HeaderInfo3 = (IWMHeaderInfo3)MetadataEditor;
                 //HeaderInfo3.SetPicAttribute(0, "WM/Picture", WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, pictureParam, (ushort)Marshal.SizeOf(picture));
                 MetadataEditor.Flush();
