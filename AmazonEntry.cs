@@ -19,15 +19,35 @@ namespace DrunkenBakery.ZuneTag
 
     internal class AmazonEntry
     {
-        public SearchMovie Movie { get; set; }
+        public SearchMovie Movie
+        {
+            get;
+            set;
+        }
 
-        public bool ExtraData { get; set; }
+        public bool ExtraData
+        {
+            get;
+            set;
+        }
 
-        public string Genre { get; set; }
+        public string Genre
+        {
+            get;
+            set;
+        }
 
-        public string Url { get; set; }
+        public string Url
+        {
+            get;
+            set;
+        }
 
-        public string Director { get; set; }
+        public string Director
+        {
+            get;
+            set;
+        }
 
         public AmazonEntry()
         {

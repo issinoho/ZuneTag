@@ -43,13 +43,7 @@ namespace DrunkenBakery.ZuneTag
             this.labelVersion.Text = String.Format("Version {0}", this.AssemblyVersion);
             this.labelCopyright.Text = this.AssemblyCopyright + DateTime.Today.Year;
             this.labelCompanyName.Text = this.AssemblyCompany;
-            this.textBoxDescription.Text = this.AssemblyDescription +
-                                            Environment.NewLine +
-                                            Environment.NewLine +
-                                            "Compiled on .NET " + asm.ImageRuntimeVersion +
-                                            Environment.NewLine +
-                                            "Running on .NET v" + Environment.Version +
-                                            Environment.NewLine;
+            this.textBoxDescription.Text = this.AssemblyDescription + Environment.NewLine + Environment.NewLine + "Compiled on .NET " + asm.ImageRuntimeVersion + Environment.NewLine + "Running on .NET v" + Environment.Version + Environment.NewLine;
 
             // Use Reflection to get a list of depenedent assemblies
             this.textBoxDescription.AppendText(Environment.NewLine + "Dependent Assemblies:");
@@ -190,6 +184,7 @@ namespace DrunkenBakery.ZuneTag
                 return ((AssemblyCompanyAttribute)attributes[0]).Company;
             }
         }
+
         #endregion
 
         /// <summary>

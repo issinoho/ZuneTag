@@ -49,6 +49,7 @@ namespace DrunkenBakery.ZuneTag
             {
                 numHexChars--;
             }
+
             return numHexChars / 2; // 2 characters per byte
         }
 
@@ -72,6 +73,7 @@ namespace DrunkenBakery.ZuneTag
                 else
                     discarded++;
             }
+
             // If odd number of characters, discard last character
             if (newString.Length % 2 != 0)
             {
@@ -88,6 +90,7 @@ namespace DrunkenBakery.ZuneTag
                 bytes[i] = HexToByte(hex);
                 j += 2;
             }
+
             return bytes;
         }
 
