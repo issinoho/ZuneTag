@@ -1,13 +1,13 @@
 ﻿//------------------------------------------------------------------
 // Zune Meta Tag Editor
-// Amazon Entry Class
+// TMDB Search Result Class
 //
-// <copyright file="AmazonEntry.cs" company="The Drunken Bakery">
+// <copyright file="TMDbSearchResult.cs" company="The Drunken Bakery">
 //     Copyright (c) 2009 The Drunken Bakery. All rights reserved.
 // </copyright>
 //
 // Editor to update WMV meta tags for the Zune
-// Holds search entry from Amazon.
+// Holds a search result entry from TMDB.
 //
 // Author: IRS
 // $Revision: 1.2 $
@@ -17,9 +17,9 @@ namespace DrunkenBakery.ZuneTag
 {
     using TMDbLib.Objects.Search;
 
-    internal class AmazonEntry
+    internal class TMDbSearchResult
     {
-        public AmazonEntry()
+        public TMDbSearchResult()
         {
             this.ExtraData = false;
             this.Genre = "unknown";

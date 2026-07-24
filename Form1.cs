@@ -114,8 +114,8 @@ namespace DrunkenBakery.ZuneTag
             this.toolTip5.SetToolTip(this.cmdTVSave, "Update TV Show with these tags");
             this.toolTip6.SetToolTip(this.cmdVideoSave, "Update Video with these tags");
             this.toolTip7.SetToolTip(this.cmdReset, "Hard reset the video type attributes");
-            this.toolTip8.SetToolTip(this.cmdCopyAz, "Copy the tags back ready for saving");
-            this.toolTip9.SetToolTip(this.cmdAmazonSearch, "Search TMDB for videos that match");
+            this.toolTip8.SetToolTip(this.cmdCopyResult, "Copy the tags back ready for saving");
+            this.toolTip9.SetToolTip(this.cmdSearchTmdb, "Search TMDB for videos that match");
             this.toolTip10.SetToolTip(this.cmdBrowse, "Open a WMV media file");
 
             // Initialise Event Views
@@ -1430,11 +1430,11 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        ///     Handles the Click event of the cmdAmazonSearch control.
+        ///     Handles the Click event of the cmdSearchTmdb control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        private void cmdAmazonSearch_Click(object sender, EventArgs e)
+        private void cmdSearchTmdb_Click(object sender, EventArgs e)
         {
             // Set up visuals pre-search
             this.lbResults.Items.Clear();
@@ -1454,7 +1454,7 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="isOn">if set to <c>true</c> [is ON].</param>
         private void SetButtons(bool isOn)
         {
-            this.cmdAmazonSearch.Enabled = isOn;
+            this.cmdSearchTmdb.Enabled = isOn;
         }
 
         /// <summary>
@@ -1479,7 +1479,7 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="e">The <see cref="System.Windows.Forms.KeyEventArgs" /> instance containing the event data.</param>
         private void txtSearchCriteria_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter) this.cmdAmazonSearch_Click(sender, e);
+            if (e.KeyCode == Keys.Enter) this.cmdSearchTmdb_Click(sender, e);
         }
 
         /// <summary>
@@ -1489,7 +1489,7 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
         private void lbResults_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var entry = (AmazonEntry)this.lbResults.SelectedItem;
+            var entry = (TMDbSearchResult)this.lbResults.SelectedItem;
             if (entry == null) return;
 
             // If not already retrieved, get additional data
@@ -1523,16 +1523,16 @@ namespace DrunkenBakery.ZuneTag
         }
 
         /// <summary>
-        ///     Handles the Click event of the cmdCopyAz control.
+        ///     Handles the Click event of the cmdCopyResult control.
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        private void cmdCopyAz_Click(object sender, EventArgs e)
+        private void cmdCopyResult_Click(object sender, EventArgs e)
         {
             if (this.lbResults.SelectedItem == null) return;
             if (this.lblMediaFile.Text.Length == 0) return;
 
-            var entry = (AmazonEntry)this.lbResults.SelectedItem;
+            var entry = (TMDbSearchResult)this.lbResults.SelectedItem;
             if (entry == null) return;
 
             switch (this.cbMediaType.SelectedIndex)
@@ -1638,7 +1638,7 @@ namespace DrunkenBakery.ZuneTag
 
             // Display results
             var results = (SearchContainer<SearchMovie>)e.Result;
-            foreach (var entry in results.Results.Select(result => new AmazonEntry
+            foreach (var entry in results.Results.Select(result => new TMDbSearchResult
                      {
                          Movie = result
                      })) this.lbResults.Items.Add(entry);
@@ -1718,7 +1718,7 @@ namespace DrunkenBakery.ZuneTag
         {
             if (this.lbResults.SelectedItem == null) return;
 
-            var entry = (AmazonEntry)this.lbResults.SelectedItem;
+            var entry = (TMDbSearchResult)this.lbResults.SelectedItem;
             if (entry?.Url.Length > 0) Process.Start(entry.Url);
         }
 

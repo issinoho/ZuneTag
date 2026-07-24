@@ -128,7 +128,7 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.pbCover = new System.Windows.Forms.PictureBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.cmdCopyAz = new System.Windows.Forms.Button();
+            this.cmdCopyResult = new System.Windows.Forms.Button();
             this.txtAzDescription = new System.Windows.Forms.TextBox();
             this.txtAzYear = new System.Windows.Forms.TextBox();
             this.label35 = new System.Windows.Forms.Label();
@@ -138,7 +138,7 @@
             this.label33 = new System.Windows.Forms.Label();
             this.lbResults = new System.Windows.Forms.ListBox();
             this.label28 = new System.Windows.Forms.Label();
-            this.cmdAmazonSearch = new System.Windows.Forms.Button();
+            this.cmdSearchTmdb = new System.Windows.Forms.Button();
             this.label26 = new System.Windows.Forms.Label();
             this.txtSearchCriteria = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
@@ -1069,7 +1069,7 @@
             this.tabPage3.Controls.Add(this.groupBox4);
             this.tabPage3.Controls.Add(this.lbResults);
             this.tabPage3.Controls.Add(this.label28);
-            this.tabPage3.Controls.Add(this.cmdAmazonSearch);
+            this.tabPage3.Controls.Add(this.cmdSearchTmdb);
             this.tabPage3.Controls.Add(this.label26);
             this.tabPage3.Controls.Add(this.txtSearchCriteria);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -1092,7 +1092,7 @@
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.cmdCopyAz);
+            this.groupBox4.Controls.Add(this.cmdCopyResult);
             this.groupBox4.Controls.Add(this.txtAzDescription);
             this.groupBox4.Controls.Add(this.txtAzYear);
             this.groupBox4.Controls.Add(this.label35);
@@ -1107,18 +1107,18 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Details";
             // 
-            // cmdCopyAz
+            // cmdCopyResult
             // 
-            this.cmdCopyAz.Image = ((System.Drawing.Image)(resources.GetObject("cmdCopyAz.Image")));
-            this.cmdCopyAz.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.cmdCopyAz.Location = new System.Drawing.Point(493, 19);
-            this.cmdCopyAz.Name = "cmdCopyAz";
-            this.cmdCopyAz.Size = new System.Drawing.Size(76, 63);
-            this.cmdCopyAz.TabIndex = 88;
-            this.cmdCopyAz.Text = "Copy Details to Tags";
-            this.cmdCopyAz.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.cmdCopyAz.UseVisualStyleBackColor = true;
-            this.cmdCopyAz.Click += new System.EventHandler(this.cmdCopyAz_Click);
+            this.cmdCopyResult.Image = ((System.Drawing.Image)(resources.GetObject("cmdCopyResult.Image")));
+            this.cmdCopyResult.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.cmdCopyResult.Location = new System.Drawing.Point(493, 19);
+            this.cmdCopyResult.Name = "cmdCopyResult";
+            this.cmdCopyResult.Size = new System.Drawing.Size(76, 63);
+            this.cmdCopyResult.TabIndex = 88;
+            this.cmdCopyResult.Text = "Copy Details to Tags";
+            this.cmdCopyResult.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.cmdCopyResult.UseVisualStyleBackColor = true;
+            this.cmdCopyResult.Click += new System.EventHandler(this.cmdCopyResult_Click);
             // 
             // txtAzDescription
             // 
@@ -1204,17 +1204,17 @@
             this.label28.TabIndex = 3;
             this.label28.Text = "Search Results";
             // 
-            // cmdAmazonSearch
+            // cmdSearchTmdb
             // 
-            this.cmdAmazonSearch.Image = ((System.Drawing.Image)(resources.GetObject("cmdAmazonSearch.Image")));
-            this.cmdAmazonSearch.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.cmdAmazonSearch.Location = new System.Drawing.Point(469, 20);
-            this.cmdAmazonSearch.Name = "cmdAmazonSearch";
-            this.cmdAmazonSearch.Size = new System.Drawing.Size(124, 23);
-            this.cmdAmazonSearch.TabIndex = 2;
-            this.cmdAmazonSearch.Text = "   Search TMDB";
-            this.cmdAmazonSearch.UseVisualStyleBackColor = true;
-            this.cmdAmazonSearch.Click += new System.EventHandler(this.cmdAmazonSearch_Click);
+            this.cmdSearchTmdb.Image = ((System.Drawing.Image)(resources.GetObject("cmdSearchTmdb.Image")));
+            this.cmdSearchTmdb.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.cmdSearchTmdb.Location = new System.Drawing.Point(469, 20);
+            this.cmdSearchTmdb.Name = "cmdSearchTmdb";
+            this.cmdSearchTmdb.Size = new System.Drawing.Size(124, 23);
+            this.cmdSearchTmdb.TabIndex = 2;
+            this.cmdSearchTmdb.Text = "   Search TMDB";
+            this.cmdSearchTmdb.UseVisualStyleBackColor = true;
+            this.cmdSearchTmdb.Click += new System.EventHandler(this.cmdSearchTmdb_Click);
             // 
             // label26
             // 
@@ -1408,7 +1408,7 @@
         private TextBox txtVideoDescription;
         private Label label32;
         private TextBox txtVideoTitle;
-        private Button cmdAmazonSearch;
+        private Button cmdSearchTmdb;
         private Label label26;
         private TextBox txtSearchCriteria;
         private ListBox lbResults;
@@ -1421,7 +1421,7 @@
         private TextBox txtAzTitle;
         private Label label33;
         private TextBox txtAzDescription;
-        private Button cmdCopyAz;
+        private Button cmdCopyResult;
         private PictureBox pbCover;
         private PictureBox pictureBox1;
         private ProgressBar progressBar1;

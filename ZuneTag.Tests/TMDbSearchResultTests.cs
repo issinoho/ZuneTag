@@ -6,12 +6,12 @@ namespace DrunkenBakery.ZuneTag.Tests
 
     using Xunit;
 
-    public class AmazonEntryTests
+    public class TMDbSearchResultTests
     {
         [Fact]
         public void Constructor_SetsDefaults()
         {
-            var entry = new AmazonEntry();
+            var entry = new TMDbSearchResult();
 
             Assert.False(entry.ExtraData);
             Assert.Equal("unknown", entry.Genre);
@@ -22,7 +22,7 @@ namespace DrunkenBakery.ZuneTag.Tests
         [Fact]
         public void ToString_ReturnsMovieTitle()
         {
-            var entry = new AmazonEntry { Movie = new SearchMovie { Title = "The Matrix" } };
+            var entry = new TMDbSearchResult { Movie = new SearchMovie { Title = "The Matrix" } };
 
             Assert.Equal("The Matrix", entry.ToString());
         }
