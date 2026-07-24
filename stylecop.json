@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "companyName": "The Drunken Bakery",
+      "copyrightText": "Copyright (c) {year} The Drunken Bakery. All rights reserved."
+    }
+  }
+}

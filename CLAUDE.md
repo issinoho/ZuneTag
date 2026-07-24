@@ -18,7 +18,8 @@ msbuild ZuneTag.sln /t:Restore,Build /p:Configuration=Release /p:Platform=x86
 - Target framework: `net48`. Platforms: `AnyCPU`, `x64`, `x86` (the NSIS installer packages the `x86\Release` output).
 - NuGet packages for the main app restore via `packages.config` (old-style, not `PackageReference`) into `packages\`; `ZuneTag.Tests` is SDK-style and uses `PackageReference`.
 - Run tests: `dotnet test ZuneTag.Tests\ZuneTag.Tests.csproj` (or via Visual Studio Test Explorer). Requires Windows — net48 test execution needs the Windows desktop runtime.
-- There is no lint config in this repo. For anything not covered by `ZuneTag.Tests` (i.e. most of `Form1.cs`, which is tightly coupled to WinForms UI state and native COM interop), verify changes by building and running the app manually (Windows only; requires the Windows Media Format SDK's `WMVCore.dll` to be registered/present, since the app P/Invokes into it).
+- Linting: `StyleCop.Analyzers` runs on all three projects (`ZuneTag.csproj` and `WMFSDKWrapper\ManagedWMFSDKWrapper.csproj` via `packages.config` + `<Analyzer>` items, `ZuneTag.Tests` via `PackageReference`), configured by the shared `stylecop.json` at the repo root. Rules run at their default severity (warning) — they surface in the build output and in Visual Studio's Error List but do not fail the build.
+- For anything not covered by `ZuneTag.Tests` (i.e. most of `Form1.cs`, which is tightly coupled to WinForms UI state and native COM interop), verify changes by building and running the app manually (Windows only; requires the Windows Media Format SDK's `WMVCore.dll` to be registered/present, since the app P/Invokes into it).
 - Installer script: `Installer\ZuneTag.nsi` (NSIS), packages `bin\x86\Release\*`.
 
 ## Architecture
