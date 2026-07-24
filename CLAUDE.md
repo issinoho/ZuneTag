@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ZuneTag ("Zune Meta Tag Editor" by The Drunken Bakery) is a Windows Forms desktop app (.NET Framework 4.8) for editing WMV metadata tags so video files display correctly as Movies, TV Shows, Music Videos, or generic Videos on a Zune. It's a single-form (`Form1`) WinForms app with no test suite.
+ZuneTag ("Zune Meta Tag Editor" by The Drunken Bakery) is a Windows Forms desktop app (.NET Framework 4.8) for editing WMV metadata tags so video files display correctly as Movies, TV Shows, Music Videos, or generic Videos on a Zune. It's a single-form (`Form1`) WinForms app; `ZuneTag.Tests` covers the handful of pure-logic classes.
 
 ## Build
 
@@ -14,10 +14,11 @@ This is a classic .NET Framework (non-SDK-style) solution — build on Windows w
 msbuild ZuneTag.sln /t:Restore,Build /p:Configuration=Release /p:Platform=x86
 ```
 
-- Solution: `ZuneTag.sln` — contains `ZuneTag.csproj` (the WinForms app) and `WMFSDKWrapper\ManagedWMFSDKWrapper.csproj` (COM interop wrapper, must build first; `ZuneTag.csproj` has a project reference to it).
+- Solution: `ZuneTag.sln` — contains `ZuneTag.csproj` (the WinForms app), `WMFSDKWrapper\ManagedWMFSDKWrapper.csproj` (COM interop wrapper, must build first; `ZuneTag.csproj` has a project reference to it), and `ZuneTag.Tests\ZuneTag.Tests.csproj` (xUnit tests, project-references `ZuneTag.csproj`).
 - Target framework: `net48`. Platforms: `AnyCPU`, `x64`, `x86` (the NSIS installer packages the `x86\Release` output).
-- NuGet packages restore via `packages.config` (old-style, not `PackageReference`) into `packages\`.
-- There is no CLI test runner or lint config in this repo — there are no automated tests. Verify changes by building and running the app manually (Windows only; requires the Windows Media Format SDK's `WMVCore.dll` to be registered/present, since the app P/Invokes into it).
+- NuGet packages for the main app restore via `packages.config` (old-style, not `PackageReference`) into `packages\`; `ZuneTag.Tests` is SDK-style and uses `PackageReference`.
+- Run tests: `dotnet test ZuneTag.Tests\ZuneTag.Tests.csproj` (or via Visual Studio Test Explorer). Requires Windows — net48 test execution needs the Windows desktop runtime.
+- There is no lint config in this repo. For anything not covered by `ZuneTag.Tests` (i.e. most of `Form1.cs`, which is tightly coupled to WinForms UI state and native COM interop), verify changes by building and running the app manually (Windows only; requires the Windows Media Format SDK's `WMVCore.dll` to be registered/present, since the app P/Invokes into it).
 - Installer script: `Installer\ZuneTag.nsi` (NSIS), packages `bin\x86\Release\*`.
 
 ## Architecture
@@ -41,3 +42,7 @@ Key flows:
 4. **Thumbnail generation**: `RegisterNewMediaFileAsync` uses `Xabe.FFmpeg` to snapshot a still frame from the loaded WMV (`FFmpeg.Conversions.FromSnippet.Snapshot`) into a temp PNG for preview; `FFmpegDownloader.GetLatestVersion` is invoked at form startup to ensure an FFmpeg binary is available.
 
 When adding new WMV tag fields, follow the existing per-media-type pattern: add the attribute name to `AddMissingAttributes()` (so it's created if absent), read it in the matching `Load*Attributes()` method, and write it in the matching `cmd*Save_Click` handler via `EditAttribute`/`ModifyAttrib`.
+
+## Testing
+
+`ZuneTag.Tests` covers `HexEncoding`, `Attribute`, and `AmazonEntry` — the only classes with no WinForms/COM dependency. `Attribute` and `AmazonEntry` are `internal`; visibility to the test assembly is granted via `[assembly: InternalsVisibleTo("ZuneTag.Tests")]` in `Properties/AssemblyInfo.cs`. `Form1` itself isn't covered: it's a single WinForms class whose constructor does COM/network/FFmpeg setup, so testing it would require extracting logic out of it first.
