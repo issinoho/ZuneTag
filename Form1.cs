@@ -987,7 +987,7 @@ namespace DrunkenBakery.ZuneTag
                 }
                 catch (Exception e)
                 {
-                    this.AddLogEntry($"RegisterNewMediaFileAsync: thumbnail snapshot failed - {e.Message}", LogType.Fail);
+                    this.AddLogEntry($"RegisterNewMediaFileAsync: thumbnail snapshot failed - {e.Message}", LogType.Info);
                 }
 
                 // Prefer any cover art already saved in the file over the auto-grabbed frame
