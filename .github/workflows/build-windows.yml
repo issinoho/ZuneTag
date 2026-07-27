@@ -1,0 +1,46 @@
+name: Build Windows executable
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v3
+
+      - name: Set up NuGet
+        uses: nuget/setup-nuget@v4
+        with:
+          nuget-version: "6.x"
+
+      # ZuneTag.csproj and WMFSDKWrapper.csproj use the classic packages.config
+      # restore model, so this is a plain NuGet restore rather than a
+      # PackageReference/MSBuild restore.
+      - name: Restore NuGet packages
+        run: nuget restore ZuneTag.sln
+
+      # Only ZuneTag.csproj (and its WMFSDKWrapper project reference) are built
+      # here - the app's own tag-editing code P/Invokes into the Windows Media
+      # Format SDK's WMVCore.dll only at runtime, so nothing extra is needed to
+      # build it. Costura.Fody (wired up via packages.config + FodyWeavers.xml)
+      # embeds all managed dependencies (TMDbLib, Newtonsoft.Json,
+      # WMFSDKWrapper.dll, etc.) into ZuneTag.exe as part of this build.
+      - name: Build ZuneTag.exe (Release, x86)
+        run: msbuild ZuneTag.csproj /p:Configuration=Release /p:Platform=x86 /p:DeployOnBuild=false /m
+
+      - name: Upload ZuneTag.exe artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ZuneTag
+          path: bin\x86\Release\ZuneTag.exe
+          if-no-files-found: error

@@ -21,6 +21,7 @@ msbuild ZuneTag.sln /t:Restore,Build /p:Configuration=Release /p:Platform=x86
 - Linting: `StyleCop.Analyzers` runs on all three projects (`ZuneTag.csproj` and `WMFSDKWrapper\ManagedWMFSDKWrapper.csproj` via `packages.config` + `<Analyzer>` items, `ZuneTag.Tests` via `PackageReference`), configured by the shared `stylecop.json` at the repo root. Rules run at their default severity (warning) — they surface in the build output and in Visual Studio's Error List but do not fail the build.
 - For anything not covered by `ZuneTag.Tests` (i.e. most of `Form1.cs`, which is tightly coupled to WinForms UI state and native COM interop), verify changes by building and running the app manually (Windows only; requires the Windows Media Format SDK's `WMVCore.dll` to be registered/present, since the app P/Invokes into it).
 - Installer script: `Installer\ZuneTag.nsi` (NSIS), packages `bin\x86\Release\*`.
+- CI: `.github/workflows/build-windows.yml` builds `ZuneTag.csproj` (Release, x86) on `windows-latest` and uploads `bin\x86\Release\ZuneTag.exe` as a workflow artifact. `Fody`/`Costura.Fody` (in `packages.config`, configured via `FodyWeavers.xml`) weave all managed dependencies (TMDbLib, Newtonsoft.Json, `WMFSDKWrapper.dll`, etc.) into that single EXE at build time — end users still need the .NET Framework 4.8 runtime and a registered `WMVCore.dll` installed separately. This doesn't touch the NSIS installer path.
 
 ## Architecture
 
