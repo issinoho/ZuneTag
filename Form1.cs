@@ -74,6 +74,8 @@ namespace DrunkenBakery.ZuneTag
 
         private readonly List<Attribute> attributes = new List<Attribute>();
 
+        private readonly string logFilePath = Path.Combine(Path.GetTempPath(), "ZuneTag.log");
+
         private readonly List<ListViewItem> lvitems = new List<ListViewItem>();
 
         private readonly Timer screenLogTimer;
@@ -131,6 +133,7 @@ namespace DrunkenBakery.ZuneTag
             // Logging
             this.AddLogEntry("--------------------------------------------------", LogType.Info);
             this.AddLogEntry("Welcome to the " + ThisApp + " v" + appVersionString, LogType.Info);
+            this.AddLogEntry("Logging to " + this.logFilePath, LogType.Info);
             this.AddLogEntry("Ready.");
 
             // Start Timers
@@ -890,6 +893,29 @@ namespace DrunkenBakery.ZuneTag
             var i = this.lvitems.Count - 1;
             this.lvitems[i].SubItems.Add(newEntry);
             this.slStatus.Text = newEntry;
+
+            this.WriteLogEntryToFile(whichLog, newEntry);
+        }
+
+        /// <summary>
+        ///     Appends a single log entry to the on-disk log file, so its contents can be
+        ///     copied without needing to select text out of the log ListView control.
+        /// </summary>
+        /// <param name="whichLog">The severity of the log entry.</param>
+        /// <param name="newEntry">The log entry text.</param>
+        private void WriteLogEntryToFile(LogType whichLog, string newEntry)
+        {
+            try
+            {
+                var line = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} [{whichLog}] {newEntry}{Environment.NewLine}";
+                File.AppendAllText(this.logFilePath, line);
+            }
+            catch (Exception)
+            {
+                // Logging to disk is a best-effort convenience - if it fails (e.g. the temp
+                // folder is unwritable), the ListView log still works, so there is nothing
+                // meaningful to surface here.
+            }
         }
 
         /// <summary>
