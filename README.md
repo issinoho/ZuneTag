@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/icon.png" alt="ZuneTag icon" width="96">
+</p>
+
 # ZuneTag
 
 **ZuneTag** ("Zune Meta Tag Editor" by The Drunken Bakery) is a Windows desktop tool for editing the metadata tags on `.wmv` files so they show up correctly as **Movies**, **TV Shows**, **Music Videos**, or generic **Videos** when synced to a Zune.
