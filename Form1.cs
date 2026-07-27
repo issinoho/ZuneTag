@@ -169,7 +169,7 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="currH">The curr H.</param>
         /// <param name="destW">The dest W.</param>
         /// <param name="destH">The dest H.</param>
-        /// <returns></returns>
+        /// <returns>Image size.</returns>
         public Size GenerateImageDimensions(int currW, int currH, int destW, int destH)
         {
             // Double to hold the final multiplier to use when scaling the image
@@ -218,7 +218,7 @@ namespace DrunkenBakery.ZuneTag
         /// </summary>
         /// <param name="pwszInFile">The PWSZ in file.</param>
         /// <param name="ppEditor">The pp editor.</param>
-        /// <returns></returns>
+        /// <returns>Success of operation.</returns>
         public bool EditorOpenFile(string pwszInFile, out IWMMetadataEditor ppEditor)
         {
             ppEditor = null;
@@ -368,7 +368,7 @@ namespace DrunkenBakery.ZuneTag
         /// </summary>
         /// <param name="pwszFileName">Name of the PWSZ file.</param>
         /// <param name="wStreamNum">The w stream num.</param>
-        /// <returns></returns>
+        /// <returns>Success of operation.</returns>
         public bool ShowAttributes(string pwszFileName, ushort wStreamNum)
         {
             try
@@ -412,7 +412,7 @@ namespace DrunkenBakery.ZuneTag
         /// </summary>
         /// <param name="pwszFileName">Name of the PWSZ file.</param>
         /// <param name="wStreamNum">The w stream num.</param>
-        /// <returns></returns>
+        /// <returns>Success of operation.</returns>
         public bool ShowAttributes3(string pwszFileName, ushort wStreamNum)
         {
             try
@@ -460,7 +460,7 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="pwszFileName">Name of the PWSZ file.</param>
         /// <param name="wStreamNum">The w stream num.</param>
         /// <param name="wAttribIndex">Index of the w attrib.</param>
-        /// <returns></returns>
+        /// <returns>Success of operation.</returns>
         public bool DeleteAttrib(string pwszFileName, ushort wStreamNum, ushort wAttribIndex)
         {
             try
@@ -493,7 +493,7 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="pwszValue">The PWSZ value.</param>
         /// <param name="pbValue">The pb value.</param>
         /// <param name="nValueLength">Length of the n value.</param>
-        /// <returns></returns>
+        /// <returns>Success of operation.</returns>
         public bool TranslateAttrib(WMT_ATTR_DATATYPE attribDataType, string pwszValue, out byte[] pbValue, out int nValueLength)
         {
             switch (attribDataType)
@@ -577,7 +577,7 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="pwszAttribName">Name of the PWSZ attrib.</param>
         /// <param name="wAttribType">Type of the w attrib.</param>
         /// <param name="pwszAttribValue">The PWSZ attrib value.</param>
-        /// <returns></returns>
+        /// <returns>Success of operation.</returns>
         public bool SetAttrib(string pwszFileName, ushort wStreamNum, string pwszAttribName, ushort wAttribType, string pwszAttribValue)
         {
             try
@@ -619,7 +619,7 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="wAttribType">Type of the w attrib.</param>
         /// <param name="pwszAttribValue">The PWSZ attrib value.</param>
         /// <param name="wLangIndex">Index of the w lang.</param>
-        /// <returns></returns>
+        /// <returns>Success of operation.</returns>
         public bool AddAttrib(string pwszFileName, ushort wStreamNum, string pwszAttribName, ushort wAttribType, string pwszAttribValue, ushort wLangIndex)
         {
             IWMMetadataEditor metadataEditor = null;
@@ -667,7 +667,7 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="wAttribType">Type of the w attrib.</param>
         /// <param name="pwszAttribValue">The PWSZ attrib value.</param>
         /// <param name="wLangIndex">Index of the w lang.</param>
-        /// <returns></returns>
+        /// <returns>Success of operation.</returns>
         public bool ModifyAttrib(string pwszFileName, ushort wStreamNum, ushort wAttribIndex, ushort wAttribType, string pwszAttribValue, ushort wLangIndex)
         {
             IWMMetadataEditor metadataEditor = null;
@@ -712,7 +712,7 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="pwszFileName">Name of the PWSZ file.</param>
         /// <param name="wStreamNum">The w stream num.</param>
         /// <param name="searchAttrib">The search attrib.</param>
-        /// <returns></returns>
+        /// <returns>Success of operation.</returns>
         public bool AttribExists(string pwszFileName, ushort wStreamNum, string searchAttrib)
         {
             var isFound = false;
