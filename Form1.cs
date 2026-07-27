@@ -1926,9 +1926,6 @@ namespace DrunkenBakery.ZuneTag
         [HandleProcessCorruptedStateExceptions]
         private void EditPicture(PictureBox myPicture)
         {
-            IWMMetadataEditor metadataEditor;
-            IWMHeaderInfo3 headerInfo3;
-
             try
             {
                 var picture = new WMPicture
@@ -1946,11 +1943,11 @@ namespace DrunkenBakery.ZuneTag
                 var pictureParam = Marshal.AllocCoTaskMem(Marshal.SizeOf(picture));
                 Marshal.StructureToPtr(picture, pictureParam, false);
 
-                WMFSDKFunctions.WMCreateEditor(out metadataEditor);
+                WMFSDKFunctions.WMCreateEditor(out var metadataEditor);
                 metadataEditor.Open(this.lblMediaFile.Text);
-                headerInfo3 = (IWMHeaderInfo3)metadataEditor;
+                var headerInfo3 = (IWMHeaderInfo3)metadataEditor;
 
-                // HeaderInfo3.SetPicAttribute(0, "WM/Picture", WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, pictureParam, (ushort)Marshal.SizeOf(picture));
+                headerInfo3.SetPicAttribute(0, "WM/Picture", WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, pictureParam, (ushort)Marshal.SizeOf(picture));
                 metadataEditor.Flush();
                 metadataEditor.Close();
             }
