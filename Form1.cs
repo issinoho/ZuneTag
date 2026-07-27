@@ -1951,23 +1951,52 @@ namespace DrunkenBakery.ZuneTag
                 var pictureBlob = this.EncodeWmPicture(data);
 
                 WMFSDKFunctions.WMCreateEditor(out var metadataEditor);
-                metadataEditor.Open(this.lblMediaFile.Text);
+                var openResult = metadataEditor.Open(this.lblMediaFile.Text);
+                this.AddLogEntry($"EditPicture: Open returned 0x{openResult:X8}.");
 
                 try
                 {
                     var headerInfo3 = (IWMHeaderInfo3)metadataEditor;
 
-                    var existing = this.attributes.FirstOrDefault(a => a.Name == "WM/Picture");
-                    if (existing != null)
+                    // Query the file directly (rather than the possibly-stale in-memory
+                    // attribute list) and remove any existing WM/Picture entries - including
+                    // duplicates left over from earlier saves - before adding the new one, so
+                    // this never depends on in-place modification handling a value that has
+                    // grown or shrunk.
+                    headerInfo3.GetAttributeCountEx(Stream, out var wAttributeCount);
+                    var existingIndices = new List<ushort>();
+                    for (ushort wAttribIndex = 0; wAttribIndex < wAttributeCount; wAttribIndex++)
                     {
-                        headerInfo3.ModifyAttribute(Stream, existing.Index, WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, Language, pictureBlob, (uint)pictureBlob.Length);
-                    }
-                    else
-                    {
-                        headerInfo3.AddAttribute(NewStream, "WM/Picture", out _, WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, Language, pictureBlob, (uint)pictureBlob.Length);
+                        string pwszAttribName = null;
+                        byte[] pbAttribValue = null;
+                        ushort wAttribNameLen = 0;
+                        uint dwAttribValueLen = 0;
+
+                        headerInfo3.GetAttributeByIndexEx(Stream, wAttribIndex, pwszAttribName, ref wAttribNameLen, out var wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
+
+                        pwszAttribName = new string((char)0, wAttribNameLen);
+                        pbAttribValue = new byte[dwAttribValueLen];
+
+                        headerInfo3.GetAttributeByIndexEx(Stream, wAttribIndex, pwszAttribName, ref wAttribNameLen, out wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
+
+                        if (pwszAttribName.Substring(0, pwszAttribName.Length - 1) == "WM/Picture")
+                        {
+                            existingIndices.Add(wAttribIndex);
+                        }
                     }
 
-                    metadataEditor.Flush();
+                    // Delete highest index first so earlier indices stay valid as we go.
+                    for (var i = existingIndices.Count - 1; i >= 0; i--)
+                    {
+                        var deleteResult = headerInfo3.DeleteAttribute(Stream, existingIndices[i]);
+                        this.AddLogEntry($"EditPicture: DeleteAttribute({existingIndices[i]}) returned 0x{deleteResult:X8}.");
+                    }
+
+                    var addResult = headerInfo3.AddAttribute(NewStream, "WM/Picture", out var newIndex, WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, Language, pictureBlob, (uint)pictureBlob.Length);
+                    this.AddLogEntry($"EditPicture: AddAttribute returned 0x{addResult:X8}, new index {newIndex}, {pictureBlob.Length} bytes.");
+
+                    var flushResult = metadataEditor.Flush();
+                    this.AddLogEntry($"EditPicture: Flush returned 0x{flushResult:X8}.");
                 }
                 finally
                 {
@@ -2080,13 +2109,15 @@ namespace DrunkenBakery.ZuneTag
             try
             {
                 WMFSDKFunctions.WMCreateEditor(out var metadataEditor);
-                metadataEditor.Open(pwszFileName);
+                var openResult = metadataEditor.Open(pwszFileName);
+                this.AddLogEntry($"TryLoadCoverArt: Open returned 0x{openResult:X8}.");
 
                 try
                 {
                     var headerInfo3 = (IWMHeaderInfo3)metadataEditor;
 
                     headerInfo3.GetAttributeCountEx(Stream, out var wAttributeCount);
+                    this.AddLogEntry($"TryLoadCoverArt: {wAttributeCount} attribute(s) found.");
 
                     for (ushort wAttribIndex = 0; wAttribIndex < wAttributeCount; wAttribIndex++)
                     {
@@ -2102,12 +2133,23 @@ namespace DrunkenBakery.ZuneTag
 
                         headerInfo3.GetAttributeByIndexEx(Stream, wAttribIndex, pwszAttribName, ref wAttribNameLen, out wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
 
-                        if (wAttribType != WMT_ATTR_DATATYPE.WMT_TYPE_BINARY || pwszAttribName.Substring(0, pwszAttribName.Length - 1) != "WM/Picture")
+                        var name = pwszAttribName.Substring(0, pwszAttribName.Length - 1);
+                        this.AddLogEntry($"TryLoadCoverArt: [{wAttribIndex}] {name} ({wAttribType}, {dwAttribValueLen} bytes).");
+
+                        if (wAttribType != WMT_ATTR_DATATYPE.WMT_TYPE_BINARY || name != "WM/Picture")
                         {
                             continue;
                         }
 
-                        image = this.DecodeWmPicture(pbAttribValue);
+                        try
+                        {
+                            image = this.DecodeWmPicture(pbAttribValue);
+                        }
+                        catch (Exception decodeException)
+                        {
+                            this.AddLogEntry($"TryLoadCoverArt: decode failed - {decodeException.Message}", LogType.Fail);
+                        }
+
                         break;
                     }
                 }
