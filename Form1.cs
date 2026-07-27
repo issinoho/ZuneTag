@@ -28,6 +28,7 @@ namespace DrunkenBakery.ZuneTag
     using System.Reflection;
     using System.Runtime.ExceptionServices;
     using System.Runtime.InteropServices;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
@@ -1940,13 +1941,6 @@ namespace DrunkenBakery.ZuneTag
 
             try
             {
-                var picture = new WMPicture
-                {
-                    PwszMIMEType = Marshal.StringToCoTaskMemUni("image/jpeg\0"),
-                    PwszDescription = Marshal.StringToCoTaskMemUni("AlbumArt\0"),
-                    BPictureType = 3,
-                };
-
                 byte[] data;
                 using (var stream = new MemoryStream())
                 {
@@ -1954,16 +1948,7 @@ namespace DrunkenBakery.ZuneTag
                     data = stream.ToArray();
                 }
 
-                picture.DwDataLen = data.Length;
-                picture.PbData = Marshal.AllocCoTaskMem(picture.DwDataLen);
-                Marshal.Copy(data, 0, picture.PbData, picture.DwDataLen);
-
-                var structSize = Marshal.SizeOf(picture);
-                var pictureParam = Marshal.AllocCoTaskMem(structSize);
-                Marshal.StructureToPtr(picture, pictureParam, false);
-                var pictureBlob = new byte[structSize];
-                Marshal.Copy(pictureParam, pictureBlob, 0, structSize);
-                Marshal.FreeCoTaskMem(pictureParam);
+                var pictureBlob = this.EncodeWmPicture(data);
 
                 WMFSDKFunctions.WMCreateEditor(out var metadataEditor);
                 metadataEditor.Open(this.lblMediaFile.Text);
@@ -1993,6 +1978,39 @@ namespace DrunkenBakery.ZuneTag
             {
                 this.AddLogEntry(e.Message, LogType.Fail);
             }
+        }
+
+        /// <summary>
+        ///     Encodes picture data into a WM/Picture attribute value: picture type byte, data
+        ///     length, null-terminated UTF-16LE MIME type, null-terminated UTF-16LE description,
+        ///     then the picture bytes.
+        /// </summary>
+        /// <param name="data">The raw picture bytes (JPEG).</param>
+        /// <returns>The encoded WM/Picture attribute value.</returns>
+        private byte[] EncodeWmPicture(byte[] data)
+        {
+            const byte FrontCoverPictureType = 3;
+            var mimeType = Encoding.Unicode.GetBytes("image/jpeg\0");
+            var description = Encoding.Unicode.GetBytes("AlbumArt\0");
+
+            var value = new byte[1 + 4 + mimeType.Length + description.Length + data.Length];
+            var offset = 0;
+
+            value[offset] = FrontCoverPictureType;
+            offset += 1;
+
+            Buffer.BlockCopy(BitConverter.GetBytes(data.Length), 0, value, offset, 4);
+            offset += 4;
+
+            Buffer.BlockCopy(mimeType, 0, value, offset, mimeType.Length);
+            offset += mimeType.Length;
+
+            Buffer.BlockCopy(description, 0, value, offset, description.Length);
+            offset += description.Length;
+
+            Buffer.BlockCopy(data, 0, value, offset, data.Length);
+
+            return value;
         }
 
         /// <summary>
