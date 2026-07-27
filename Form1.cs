@@ -1961,20 +1961,27 @@ namespace DrunkenBakery.ZuneTag
 
                 WMFSDKFunctions.WMCreateEditor(out var metadataEditor);
                 metadataEditor.Open(this.lblMediaFile.Text);
-                var headerInfo3 = (IWMHeaderInfo3)metadataEditor;
 
-                var existing = this.attributes.FirstOrDefault(a => a.Name == "WM/Picture");
-                if (existing != null)
+                try
                 {
-                    headerInfo3.ModifyAttribute(Stream, existing.Index, WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, Language, pictureBlob, (uint)pictureBlob.Length);
-                }
-                else
-                {
-                    headerInfo3.AddAttribute(Stream, "WM/Picture", out _, WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, Language, pictureBlob, (uint)pictureBlob.Length);
-                }
+                    var headerInfo3 = (IWMHeaderInfo3)metadataEditor;
 
-                metadataEditor.Flush();
-                metadataEditor.Close();
+                    var existing = this.attributes.FirstOrDefault(a => a.Name == "WM/Picture");
+                    if (existing != null)
+                    {
+                        headerInfo3.ModifyAttribute(Stream, existing.Index, WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, Language, pictureBlob, (uint)pictureBlob.Length);
+                    }
+                    else
+                    {
+                        headerInfo3.AddAttribute(NewStream, "WM/Picture", out _, WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, Language, pictureBlob, (uint)pictureBlob.Length);
+                    }
+
+                    metadataEditor.Flush();
+                }
+                finally
+                {
+                    metadataEditor.Close();
+                }
             }
             catch (Exception e)
             {
