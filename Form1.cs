@@ -948,40 +948,57 @@ namespace DrunkenBakery.ZuneTag
         /// <summary>
         ///     Registers the new media file.
         /// </summary>
+        [HandleProcessCorruptedStateExceptions]
         private async Task RegisterNewMediaFileAsync()
         {
-            var input = this.lblMediaFile.Text;
-            var output = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".png");
-
-            if (!File.Exists(input))
+            // This method is invoked fire-and-forget (the callers discard the returned Task),
+            // so any exception thrown anywhere in here - including from the FFmpeg snapshot
+            // call - would otherwise be silently swallowed by the runtime: no crash, no log,
+            // nothing visible at all. Wrap the whole thing so that can't happen again.
+            try
             {
-                this.AddLogEntry("Can't load - media file not found", LogType.Fail);
-                return;
+                var input = this.lblMediaFile.Text;
+                var output = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".png");
+
+                this.AddLogEntry($"RegisterNewMediaFileAsync: loading {input}.");
+
+                if (!File.Exists(input))
+                {
+                    this.AddLogEntry("Can't load - media file not found", LogType.Fail);
+                    return;
+                }
+
+                // Grab still frame, if possible
+                this.AddLogEntry("RegisterNewMediaFileAsync: requesting FFmpeg snapshot.");
+                var conversion = await FFmpeg.Conversions.FromSnippet.Snapshot(input, output, TimeSpan.FromSeconds(1));
+                this.AddLogEntry("RegisterNewMediaFileAsync: starting FFmpeg snapshot conversion.");
+                var result = await conversion.Start();
+                this.AddLogEntry("RegisterNewMediaFileAsync: FFmpeg snapshot conversion complete.");
+
+                // Load frame into PB
+                var fs = new FileStream(output, FileMode.Open, FileAccess.Read);
+                this.pictureBox1.Image = Image.FromStream(fs);
+                fs.Close();
+
+                // Prefer any cover art already saved in the file over the auto-grabbed frame
+                if (this.TryLoadCoverArt(input, out var coverArt))
+                {
+                    this.pictureBox1.Image = coverArt;
+                }
+
+                // Make sure all supported attributes are defined
+                this.AddMissingAttributes();
+
+                // Refresh attributes from file
+                this.InspectFile();
+
+                // Logging
+                this.AddLogEntry(this.lblMediaFile.Text + " successfully loaded");
             }
-
-            // Grab still frame, if possible
-            var conversion = await FFmpeg.Conversions.FromSnippet.Snapshot(input, output, TimeSpan.FromSeconds(1));
-            var result = await conversion.Start();
-
-            // Load frame into PB
-            var fs = new FileStream(output, FileMode.Open, FileAccess.Read);
-            this.pictureBox1.Image = Image.FromStream(fs);
-            fs.Close();
-
-            // Prefer any cover art already saved in the file over the auto-grabbed frame
-            if (this.TryLoadCoverArt(input, out var coverArt))
+            catch (Exception e)
             {
-                this.pictureBox1.Image = coverArt;
+                this.AddLogEntry($"RegisterNewMediaFileAsync: {e}", LogType.Fail);
             }
-
-            // Make sure all supported attributes are defined
-            this.AddMissingAttributes();
-
-            // Refresh attributes from file
-            this.InspectFile();
-
-            // Logging
-            this.AddLogEntry(this.lblMediaFile.Text + " successfully loaded");
         }
 
         /// <summary>
