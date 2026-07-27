@@ -20,6 +20,7 @@ namespace DrunkenBakery.ZuneTag
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Drawing;
+    using System.Drawing.Drawing2D;
     using System.Drawing.Imaging;
     using System.Globalization;
     using System.IO;
@@ -28,6 +29,7 @@ namespace DrunkenBakery.ZuneTag
     using System.Reflection;
     using System.Runtime.ExceptionServices;
     using System.Runtime.InteropServices;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
@@ -63,6 +65,8 @@ namespace DrunkenBakery.ZuneTag
         private const ushort NewStream = 0;
 
         private const ushort Language = 0;
+
+        private const int MaxEmbeddedPictureDimension = 300;
 
         private const string TypeVideo = "BD-30-98-DB-B3-3A-AB-4F-8A-37-1A-99-5F-7F-F7-4B";
 
@@ -1966,38 +1970,33 @@ namespace DrunkenBakery.ZuneTag
 
             try
             {
+                // AddAttribute just stores pValue verbatim as the attribute's raw bytes - it
+                // does not special-case "WM/Picture" or dereference any pointers in it, so the
+                // value must be the fully flattened, self-contained format already (matching
+                // what DecodeWmPicture reads back). The picture is also resized down first:
+                // TMDB posters are served at full original resolution (often 2000x3000+), and
+                // embedding one of those unresized - several hundred KB for a single attribute
+                // value - is what triggered an access violation inside WMVCore.
+                var embedSize = this.GetEmbeddedPictureSize(myPicture.Image);
                 byte[] data;
-                using (var stream = new MemoryStream())
+                using (var resized = new Bitmap(embedSize.Width, embedSize.Height))
                 {
-                    myPicture.Image.Save(stream, ImageFormat.Jpeg);
-                    data = stream.ToArray();
+                    using (var graphics = Graphics.FromImage(resized))
+                    {
+                        graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                        graphics.DrawImage(myPicture.Image, 0, 0, embedSize.Width, embedSize.Height);
+                    }
+
+                    using (var stream = new MemoryStream())
+                    {
+                        resized.Save(stream, ImageFormat.Jpeg);
+                        data = stream.ToArray();
+                    }
                 }
 
-                // IWMHeaderInfo3::AddAttribute/ModifyAttribute appear to special-case
-                // "WM/Picture": they expect pValue to be an in-process WM_PICTURE struct
-                // containing live pointers (dereferenced synchronously during the call and
-                // flattened into the file's actual, self-contained on-disk format), not the
-                // flattened bytes themselves - handing them the flattened bytes directly
-                // causes them to dereference garbage pointers and crash.
-                var mimeTypePtr = Marshal.StringToCoTaskMemUni("image/jpeg\0");
-                var descriptionPtr = Marshal.StringToCoTaskMemUni("AlbumArt\0");
-                var dataPtr = Marshal.AllocCoTaskMem(data.Length);
-                Marshal.Copy(data, 0, dataPtr, data.Length);
+                this.AddLogEntry($"EditPicture: source {myPicture.Image.Width}x{myPicture.Image.Height}, resized to {embedSize.Width}x{embedSize.Height}, {data.Length} JPEG bytes.");
 
-                var picture = new WMPicture
-                {
-                    PwszMIMEType = mimeTypePtr,
-                    PwszDescription = descriptionPtr,
-                    BPictureType = 3,
-                    DwDataLen = data.Length,
-                    PbData = dataPtr,
-                };
-
-                var structSize = Marshal.SizeOf(picture);
-                var picturePtr = Marshal.AllocCoTaskMem(structSize);
-                Marshal.StructureToPtr(picture, picturePtr, false);
-                var pictureBlob = new byte[structSize];
-                Marshal.Copy(picturePtr, pictureBlob, 0, structSize);
+                var pictureBlob = this.EncodeWmPicture(data);
 
                 WMFSDKFunctions.WMCreateEditor(out var metadataEditor);
                 var openResult = metadataEditor.Open(this.lblMediaFile.Text);
@@ -2053,16 +2052,63 @@ namespace DrunkenBakery.ZuneTag
                 finally
                 {
                     metadataEditor.Close();
-                    Marshal.FreeCoTaskMem(picturePtr);
-                    Marshal.FreeCoTaskMem(dataPtr);
-                    Marshal.FreeCoTaskMem(descriptionPtr);
-                    Marshal.FreeCoTaskMem(mimeTypePtr);
                 }
             }
             catch (Exception e)
             {
                 this.AddLogEntry(e.Message, LogType.Fail);
             }
+        }
+
+        /// <summary>
+        ///     Determines the size to embed a picture at, scaling it down to fit within
+        ///     <see cref="MaxEmbeddedPictureDimension" /> (preserving aspect ratio) if it's
+        ///     larger than that in either dimension, so a full-resolution TMDB poster doesn't
+        ///     end up embedded at its original size.
+        /// </summary>
+        /// <param name="image">The source image.</param>
+        /// <returns>The size to render the image at before embedding.</returns>
+        private Size GetEmbeddedPictureSize(Image image)
+        {
+            if (image.Width <= MaxEmbeddedPictureDimension && image.Height <= MaxEmbeddedPictureDimension)
+            {
+                return image.Size;
+            }
+
+            return this.GenerateImageDimensions(image.Width, image.Height, MaxEmbeddedPictureDimension, MaxEmbeddedPictureDimension);
+        }
+
+        /// <summary>
+        ///     Encodes picture data into a WM/Picture attribute value: picture type byte, data
+        ///     length, null-terminated UTF-16LE MIME type, null-terminated UTF-16LE description,
+        ///     then the picture bytes.
+        /// </summary>
+        /// <param name="data">The raw picture bytes (JPEG).</param>
+        /// <returns>The encoded WM/Picture attribute value.</returns>
+        private byte[] EncodeWmPicture(byte[] data)
+        {
+            const byte FrontCoverPictureType = 3;
+            var mimeType = Encoding.Unicode.GetBytes("image/jpeg\0");
+            var description = Encoding.Unicode.GetBytes("AlbumArt\0");
+
+            var value = new byte[1 + 4 + mimeType.Length + description.Length + data.Length];
+            var offset = 0;
+
+            value[offset] = FrontCoverPictureType;
+            offset += 1;
+
+            Buffer.BlockCopy(BitConverter.GetBytes(data.Length), 0, value, offset, 4);
+            offset += 4;
+
+            Buffer.BlockCopy(mimeType, 0, value, offset, mimeType.Length);
+            offset += mimeType.Length;
+
+            Buffer.BlockCopy(description, 0, value, offset, description.Length);
+            offset += description.Length;
+
+            Buffer.BlockCopy(data, 0, value, offset, data.Length);
+
+            return value;
         }
 
         /// <summary>
@@ -2167,6 +2213,7 @@ namespace DrunkenBakery.ZuneTag
                         try
                         {
                             image = this.DecodeWmPicture(pbAttribValue);
+                            this.AddLogEntry($"TryLoadCoverArt: decode {(image != null ? "succeeded" : "returned no image")}.");
                         }
                         catch (Exception decodeException)
                         {
