@@ -14,6 +14,7 @@ The Zune classifies video content using a pair of GUID-valued attributes baked i
 - Dedicated panels for Movie, TV Show, Music Video, and generic Video metadata, matching what the Zune expects for each type.
 - Built-in search against [The Movie Database (TMDB)](https://www.themoviedb.org/) to pull in title, genre, director, description, and cover art, then copy it straight into the tag fields.
 - Generates a thumbnail preview from the video file itself so you can confirm you're tagging the right one.
+- Logs diagnostic output to `%TEMP%\ZuneTag.log` for troubleshooting.
 
 ## Tech stack
 
