@@ -938,6 +938,12 @@ namespace DrunkenBakery.ZuneTag
             this.pictureBox1.Image = Image.FromStream(fs);
             fs.Close();
 
+            // Prefer any cover art already saved in the file over the auto-grabbed frame
+            if (this.TryLoadCoverArt(input, out var coverArt))
+            {
+                this.pictureBox1.Image = coverArt;
+            }
+
             // Make sure all supported attributes are defined
             this.AddMissingAttributes();
 
@@ -1987,6 +1993,118 @@ namespace DrunkenBakery.ZuneTag
             {
                 this.AddLogEntry(e.Message, LogType.Fail);
             }
+        }
+
+        /// <summary>
+        ///     Decodes a WM/Picture attribute value (picture type byte, data length, null-terminated
+        ///     UTF-16LE MIME type, null-terminated UTF-16LE description, then the picture bytes) into
+        ///     an image.
+        /// </summary>
+        /// <param name="value">The raw WM/Picture attribute value.</param>
+        /// <returns>The decoded image, or null if the value could not be parsed.</returns>
+        private Image DecodeWmPicture(byte[] value)
+        {
+            const int HeaderLength = 5; // 1-byte picture type + 4-byte data length
+
+            if (value == null || value.Length < HeaderLength)
+            {
+                return null;
+            }
+
+            var dataLen = BitConverter.ToUInt32(value, 1);
+            var offset = this.SkipNullTerminatedUnicodeString(value, HeaderLength);
+            if (offset >= 0)
+            {
+                offset = this.SkipNullTerminatedUnicodeString(value, offset);
+            }
+
+            if (offset < 0 || offset + dataLen > value.Length)
+            {
+                return null;
+            }
+
+            var stream = new MemoryStream(value, offset, (int)dataLen);
+            return Image.FromStream(stream);
+        }
+
+        /// <summary>
+        ///     Finds the offset immediately after the next UTF-16LE null terminator in
+        ///     <paramref name="value" />, starting from <paramref name="offset" />.
+        /// </summary>
+        /// <param name="value">The buffer to search.</param>
+        /// <param name="offset">The offset to start searching from.</param>
+        /// <returns>The offset after the terminator, or -1 if none was found.</returns>
+        private int SkipNullTerminatedUnicodeString(byte[] value, int offset)
+        {
+            while (offset >= 0 && offset + 1 < value.Length)
+            {
+                if (value[offset] == 0 && value[offset + 1] == 0)
+                {
+                    return offset + 2;
+                }
+
+                offset += 2;
+            }
+
+            return -1;
+        }
+
+        /// <summary>
+        ///     Attempts to read the WM/Picture attribute from the file and decode it as an image.
+        /// </summary>
+        /// <param name="pwszFileName">Name of the PWSZ file.</param>
+        /// <param name="image">The decoded cover art image, if one was found.</param>
+        /// <returns>true if a WM/Picture attribute was found and decoded; otherwise false.</returns>
+        private bool TryLoadCoverArt(string pwszFileName, out Image image)
+        {
+            image = null;
+
+            try
+            {
+                WMFSDKFunctions.WMCreateEditor(out var metadataEditor);
+                metadataEditor.Open(pwszFileName);
+
+                try
+                {
+                    var headerInfo3 = (IWMHeaderInfo3)metadataEditor;
+
+                    headerInfo3.GetAttributeCountEx(Stream, out var wAttributeCount);
+
+                    for (ushort wAttribIndex = 0; wAttribIndex < wAttributeCount; wAttribIndex++)
+                    {
+                        string pwszAttribName = null;
+                        byte[] pbAttribValue = null;
+                        ushort wAttribNameLen = 0;
+                        uint dwAttribValueLen = 0;
+
+                        headerInfo3.GetAttributeByIndexEx(Stream, wAttribIndex, pwszAttribName, ref wAttribNameLen, out var wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
+
+                        pwszAttribName = new string((char)0, wAttribNameLen);
+                        pbAttribValue = new byte[dwAttribValueLen];
+
+                        headerInfo3.GetAttributeByIndexEx(Stream, wAttribIndex, pwszAttribName, ref wAttribNameLen, out wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
+
+                        if (wAttribType != WMT_ATTR_DATATYPE.WMT_TYPE_BINARY || pwszAttribName.Substring(0, pwszAttribName.Length - 1) != "WM/Picture")
+                        {
+                            continue;
+                        }
+
+                        image = this.DecodeWmPicture(pbAttribValue);
+                        break;
+                    }
+                }
+                finally
+                {
+                    metadataEditor.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                this.AddLogEntry(e.Message, LogType.Fail);
+                return false;
+            }
+
+            return image != null;
         }
 
         /// <summary>
