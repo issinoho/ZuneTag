@@ -2183,26 +2183,31 @@ namespace DrunkenBakery.ZuneTag
         /// <returns>The decoded image, or null if the value could not be parsed.</returns>
         private Image DecodeWmPicture(byte[] value)
         {
-            const int HeaderLength = 5; // 1-byte picture type + 4-byte data length
+            // Verified against a real stored value: a 17-byte opaque header (matching the size
+            // of the WMPicture struct originally passed to AddAttribute - the SDK appears to
+            // leave these bytes as-is rather than rewriting them), then a null-terminated
+            // UTF-16LE MIME type, then a null-terminated UTF-16LE description, then the picture
+            // bytes running to the end of the value (there is no separate length field for the
+            // picture data itself - it's simply everything left over).
+            const int HeaderLength = 17;
 
             if (value == null || value.Length < HeaderLength)
             {
                 return null;
             }
 
-            var dataLen = BitConverter.ToUInt32(value, 1);
             var offset = this.SkipNullTerminatedUnicodeString(value, HeaderLength);
             if (offset >= 0)
             {
                 offset = this.SkipNullTerminatedUnicodeString(value, offset);
             }
 
-            if (offset < 0 || offset + dataLen > value.Length)
+            if (offset < 0 || offset >= value.Length)
             {
                 return null;
             }
 
-            var stream = new MemoryStream(value, offset, (int)dataLen);
+            var stream = new MemoryStream(value, offset, value.Length - offset);
             return Image.FromStream(stream);
         }
 
