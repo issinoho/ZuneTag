@@ -18,7 +18,11 @@ namespace DrunkenBakery.ZuneTag
     using System;
     using System.IO;
     using System.Reflection;
+    using System.Runtime.Versioning;
+    using System.Security;
     using System.Windows.Forms;
+
+    using Microsoft.Win32;
 
     /// <summary>
     ///     Standard Cygnet About box.
@@ -43,7 +47,7 @@ namespace DrunkenBakery.ZuneTag
             this.labelVersion.Text = string.Format("Version {0}", this.AssemblyVersion);
             this.labelCopyright.Text = this.AssemblyCopyright + DateTime.Today.Year;
             this.labelCompanyName.Text = this.AssemblyCompany;
-            this.textBoxDescription.Text = this.AssemblyDescription + Environment.NewLine + Environment.NewLine + "Compiled on .NET " + asm.ImageRuntimeVersion + Environment.NewLine + "Running on .NET v" + Environment.Version + Environment.NewLine;
+            this.textBoxDescription.Text = this.AssemblyDescription + Environment.NewLine + Environment.NewLine + "Compiled on " + GetCompiledFrameworkName(asm) + Environment.NewLine + "Running on .NET Framework " + GetInstalledFrameworkVersion() + Environment.NewLine;
 
             // Use Reflection to get a list of depenedent assemblies
             this.textBoxDescription.AppendText(Environment.NewLine + "Dependent Assemblies:");
@@ -175,6 +179,129 @@ namespace DrunkenBakery.ZuneTag
                 // If there is a Company attribute, return its value
                 return ((AssemblyCompanyAttribute)attributes[0]).Company;
             }
+        }
+
+        /// <summary>
+        ///     Gets the human-readable .NET Framework version this assembly was compiled against.
+        /// </summary>
+        /// <param name="assembly">The assembly to inspect.</param>
+        /// <returns>A display name such as ".NET Framework 4.8".</returns>
+        /// <remarks>
+        ///     <see cref="Assembly.ImageRuntimeVersion" /> only reports the CLR version (e.g.
+        ///     "v4.0.30319"), which is identical for every .NET Framework release from 2.0
+        ///     through 4.8. The <see cref="TargetFrameworkAttribute" /> MSBuild embeds from
+        ///     TargetFrameworkVersion is the only reliable way to recover the actual target.
+        /// </remarks>
+        private static string GetCompiledFrameworkName(Assembly assembly)
+        {
+            var targetFramework = assembly.GetCustomAttribute<TargetFrameworkAttribute>();
+            if (!string.IsNullOrEmpty(targetFramework?.FrameworkDisplayName))
+            {
+                return targetFramework.FrameworkDisplayName;
+            }
+
+            return targetFramework?.FrameworkName ?? ".NET " + assembly.ImageRuntimeVersion;
+        }
+
+        /// <summary>
+        ///     Gets the .NET Framework version currently installed and running on this machine.
+        /// </summary>
+        /// <returns>A display name such as "4.8".</returns>
+        /// <remarks>
+        ///     <see cref="Environment.Version" /> only reports the CLR build number, which does
+        ///     not distinguish between in-place 4.x updates. Microsoft's documented detection
+        ///     method reads the "Release" value from the registry instead.
+        /// </remarks>
+        private static string GetInstalledFrameworkVersion()
+        {
+            try
+            {
+                using (var ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32)
+                    .OpenSubKey(@"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\"))
+                {
+                    if (ndpKey?.GetValue("Release") is int releaseKey)
+                    {
+                        return CheckFor45PlusVersion(releaseKey);
+                    }
+                }
+            }
+            catch (SecurityException)
+            {
+            }
+            catch (IOException)
+            {
+            }
+
+            return "unknown (CLR v" + Environment.Version + ")";
+        }
+
+        /// <summary>
+        ///     Maps a .NET Framework 4.5+ registry "Release" value to its version number.
+        /// </summary>
+        /// <param name="releaseKey">The release value read from the registry.</param>
+        /// <returns>The corresponding .NET Framework version.</returns>
+        /// <remarks>
+        ///     Thresholds are from
+        ///     https://learn.microsoft.com/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed.
+        /// </remarks>
+        private static string CheckFor45PlusVersion(int releaseKey)
+        {
+            if (releaseKey >= 533320)
+            {
+                return "4.8.1 or later";
+            }
+
+            if (releaseKey >= 528040)
+            {
+                return "4.8";
+            }
+
+            if (releaseKey >= 461808)
+            {
+                return "4.7.2";
+            }
+
+            if (releaseKey >= 461308)
+            {
+                return "4.7.1";
+            }
+
+            if (releaseKey >= 460798)
+            {
+                return "4.7";
+            }
+
+            if (releaseKey >= 394802)
+            {
+                return "4.6.2";
+            }
+
+            if (releaseKey >= 394254)
+            {
+                return "4.6.1";
+            }
+
+            if (releaseKey >= 393295)
+            {
+                return "4.6";
+            }
+
+            if (releaseKey >= 379893)
+            {
+                return "4.5.2";
+            }
+
+            if (releaseKey >= 378675)
+            {
+                return "4.5.1";
+            }
+
+            if (releaseKey >= 378389)
+            {
+                return "4.5";
+            }
+
+            return "unknown (release " + releaseKey + ")";
         }
 
         /// <summary>
