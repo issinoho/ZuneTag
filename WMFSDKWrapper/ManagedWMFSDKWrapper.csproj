@@ -150,6 +150,9 @@
     <Compile Include="WMFSDKFunctions.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WMPicture.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />

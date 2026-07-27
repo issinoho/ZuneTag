@@ -1970,13 +1970,14 @@ namespace DrunkenBakery.ZuneTag
 
             try
             {
-                // AddAttribute just stores pValue verbatim as the attribute's raw bytes - it
-                // does not special-case "WM/Picture" or dereference any pointers in it, so the
-                // value must be the fully flattened, self-contained format already (matching
-                // what DecodeWmPicture reads back). The picture is also resized down first:
-                // TMDB posters are served at full original resolution (often 2000x3000+), and
-                // embedding one of those unresized - several hundred KB for a single attribute
-                // value - is what triggered an access violation inside WMVCore.
+                // A flat, self-contained blob (matching what DecodeWmPicture reads back)
+                // reliably crashes AddAttribute for "WM/Picture" - even a tiny 25KB one, on a
+                // brand new file, on the very first attempt, with no prior deletes. A blob
+                // containing only pointers (to the MIME/description/data, valid at call time
+                // and presumably dereferenced synchronously by the SDK) has never crashed in
+                // any test so far. So: build the pointer-based struct here, and immediately
+                // read the attribute back afterwards to log its true stored size - rather than
+                // assuming, as before, that "stored size" is just the struct size we passed in.
                 var embedSize = this.GetEmbeddedPictureSize(myPicture.Image);
                 byte[] data;
                 using (var resized = new Bitmap(embedSize.Width, embedSize.Height))
@@ -1996,7 +1997,25 @@ namespace DrunkenBakery.ZuneTag
 
                 this.AddLogEntry($"EditPicture: source {myPicture.Image.Width}x{myPicture.Image.Height}, resized to {embedSize.Width}x{embedSize.Height}, {data.Length} JPEG bytes.");
 
-                var pictureBlob = this.EncodeWmPicture(data);
+                var mimeTypePtr = Marshal.StringToCoTaskMemUni("image/jpeg\0");
+                var descriptionPtr = Marshal.StringToCoTaskMemUni("AlbumArt\0");
+                var dataPtr = Marshal.AllocCoTaskMem(data.Length);
+                Marshal.Copy(data, 0, dataPtr, data.Length);
+
+                var picture = new WMPicture
+                {
+                    PwszMIMEType = mimeTypePtr,
+                    PwszDescription = descriptionPtr,
+                    BPictureType = 3,
+                    DwDataLen = data.Length,
+                    PbData = dataPtr,
+                };
+
+                var structSize = Marshal.SizeOf(picture);
+                var picturePtr = Marshal.AllocCoTaskMem(structSize);
+                Marshal.StructureToPtr(picture, picturePtr, false);
+                var pictureBlob = new byte[structSize];
+                Marshal.Copy(picturePtr, pictureBlob, 0, structSize);
 
                 WMFSDKFunctions.WMCreateEditor(out var metadataEditor);
                 var openResult = metadataEditor.Open(this.lblMediaFile.Text);
@@ -2044,14 +2063,27 @@ namespace DrunkenBakery.ZuneTag
                     }
 
                     var addResult = headerInfo3.AddAttribute(NewStream, "WM/Picture", out var newIndex, WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, Language, pictureBlob, (uint)pictureBlob.Length);
-                    this.AddLogEntry($"EditPicture: AddAttribute returned 0x{addResult:X8}, new index {newIndex}, {pictureBlob.Length} bytes.");
+                    this.AddLogEntry($"EditPicture: AddAttribute returned 0x{addResult:X8}, new index {newIndex}, passed {pictureBlob.Length} bytes.");
 
                     var flushResult = metadataEditor.Flush();
                     this.AddLogEntry($"EditPicture: Flush returned 0x{flushResult:X8}.");
+
+                    // Re-read what was actually stored, rather than assuming it matches what
+                    // we passed in.
+                    ushort verifyNameLen = 0;
+                    uint verifyValueLen = 0;
+                    string verifyName = null;
+                    byte[] verifyValue = null;
+                    headerInfo3.GetAttributeByIndexEx(Stream, newIndex, verifyName, ref verifyNameLen, out var verifyType, out _, verifyValue, ref verifyValueLen);
+                    this.AddLogEntry($"EditPicture: stored value at index {newIndex} is {verifyValueLen} bytes ({verifyType}).");
                 }
                 finally
                 {
                     metadataEditor.Close();
+                    Marshal.FreeCoTaskMem(picturePtr);
+                    Marshal.FreeCoTaskMem(dataPtr);
+                    Marshal.FreeCoTaskMem(descriptionPtr);
+                    Marshal.FreeCoTaskMem(mimeTypePtr);
                 }
             }
             catch (Exception e)
