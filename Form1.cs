@@ -20,6 +20,7 @@ namespace DrunkenBakery.ZuneTag
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Drawing;
+    using System.Drawing.Imaging;
     using System.Globalization;
     using System.IO;
     using System.Linq;
@@ -1926,6 +1927,11 @@ namespace DrunkenBakery.ZuneTag
         [HandleProcessCorruptedStateExceptions]
         private void EditPicture(PictureBox myPicture)
         {
+            if (myPicture.Image == null)
+            {
+                return;
+            }
+
             try
             {
                 var picture = new WMPicture
@@ -1935,8 +1941,13 @@ namespace DrunkenBakery.ZuneTag
                     BPictureType = 3,
                 };
 
-                var tempFilePath = AppContext.BaseDirectory + Settings.Default.TemporaryFile;
-                var data = File.ReadAllBytes(tempFilePath);
+                byte[] data;
+                using (var stream = new MemoryStream())
+                {
+                    myPicture.Image.Save(stream, ImageFormat.Jpeg);
+                    data = stream.ToArray();
+                }
+
                 picture.DwDataLen = data.Length;
                 picture.PbData = Marshal.AllocCoTaskMem(picture.DwDataLen);
                 Marshal.Copy(data, 0, picture.PbData, picture.DwDataLen);
