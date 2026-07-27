@@ -268,17 +268,30 @@ a {
   text-align: center;
 }
 
-.screenshot-placeholder {
-  border: 1px dashed var(--border);
-  border-radius: 12px;
-  padding: 64px 24px;
-  color: var(--text-muted);
-  max-width: 760px;
-  margin: 0 auto;
+.screenshot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  text-align: left;
 }
 
-.screenshot-placeholder p {
+.screenshot-grid figure {
   margin: 0;
+}
+
+.screenshot-grid img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+.screenshot-grid figcaption {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-top: 12px;
 }
 
 /* Download */
