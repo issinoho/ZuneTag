@@ -2281,6 +2281,10 @@ namespace DrunkenBakery.ZuneTag
                             continue;
                         }
 
+                        var headerLength = Math.Min(80, pbAttribValue.Length);
+                        var headerHex = BitConverter.ToString(pbAttribValue, 0, headerLength);
+                        this.AddLogEntry($"TryLoadCoverArt: WM/Picture first {headerLength} bytes: {headerHex}");
+
                         try
                         {
                             image = this.DecodeWmPicture(pbAttribValue);
