@@ -194,8 +194,8 @@
             this.lblMediaFile.TabIndex = 2;
             this.lblMediaFile.Text = "<< Drag a WMV media file here >>";
             this.lblMediaFile.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblMediaFile.DragDrop += new System.Windows.Forms.DragEventHandler(this.lblMediaFile_DragDrop);
-            this.lblMediaFile.DragEnter += new System.Windows.Forms.DragEventHandler(this.lblMediaFile_DragEnter);
+            this.lblMediaFile.DragDrop += new System.Windows.Forms.DragEventHandler(this.LblMediaFile_DragDrop);
+            this.lblMediaFile.DragEnter += new System.Windows.Forms.DragEventHandler(this.LblMediaFile_DragEnter);
             // 
             // cmdBrowse
             // 
@@ -205,7 +205,7 @@
             this.cmdBrowse.Size = new System.Drawing.Size(28, 23);
             this.cmdBrowse.TabIndex = 1;
             this.cmdBrowse.UseVisualStyleBackColor = true;
-            this.cmdBrowse.Click += new System.EventHandler(this.cmdBrowse_Click);
+            this.cmdBrowse.Click += new System.EventHandler(this.CmdBrowse_Click);
             // 
             // imLV
             // 
@@ -257,7 +257,7 @@
             this.exitToolStripMenuItem1.Name = "exitToolStripMenuItem1";
             this.exitToolStripMenuItem1.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem1.Text = "Exit";
-            this.exitToolStripMenuItem1.Click += new System.EventHandler(this.exitToolStripMenuItem1_Click);
+            this.exitToolStripMenuItem1.Click += new System.EventHandler(this.ExitToolStripMenuItem1_Click);
             // 
             // helpToolStripMenuItem
             // 
@@ -274,7 +274,7 @@
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutToolStripMenuItem_Click);
             // 
             // tabControl1
             // 
@@ -348,7 +348,7 @@
             this.cmdMovieSave.TabIndex = 62;
             this.cmdMovieSave.Text = "   Save";
             this.cmdMovieSave.UseVisualStyleBackColor = true;
-            this.cmdMovieSave.Click += new System.EventHandler(this.cmdMovieSave_Click);
+            this.cmdMovieSave.Click += new System.EventHandler(this.CmdMovieSave_Click);
             // 
             // label13
             // 
@@ -512,7 +512,7 @@
             this.cmdTVSave.TabIndex = 41;
             this.cmdTVSave.Text = "   Save";
             this.cmdTVSave.UseVisualStyleBackColor = true;
-            this.cmdTVSave.Click += new System.EventHandler(this.cmdTVSave_Click);
+            this.cmdTVSave.Click += new System.EventHandler(this.CmdTVSave_Click);
             // 
             // label11
             // 
@@ -717,7 +717,7 @@
             this.cmdVideoSave.TabIndex = 92;
             this.cmdVideoSave.Text = "   Save";
             this.cmdVideoSave.UseVisualStyleBackColor = true;
-            this.cmdVideoSave.Click += new System.EventHandler(this.cmdVideoSave_Click);
+            this.cmdVideoSave.Click += new System.EventHandler(this.CmdVideoSave_Click);
             // 
             // label27
             // 
@@ -840,7 +840,7 @@
             this.cmdMusicSave.TabIndex = 77;
             this.cmdMusicSave.Text = "   Save";
             this.cmdMusicSave.UseVisualStyleBackColor = true;
-            this.cmdMusicSave.Click += new System.EventHandler(this.cmdMusicSave_Click);
+            this.cmdMusicSave.Click += new System.EventHandler(this.CmdMusicSave_Click);
             // 
             // label12
             // 
@@ -988,7 +988,7 @@
             this.cmdReset.TabIndex = 40;
             this.cmdReset.Text = "   Reset";
             this.cmdReset.UseVisualStyleBackColor = true;
-            this.cmdReset.Click += new System.EventHandler(this.cmdReset_Click);
+            this.cmdReset.Click += new System.EventHandler(this.CmdReset_Click);
             // 
             // label2
             // 
@@ -1018,7 +1018,7 @@
             this.cmdModify.TabIndex = 37;
             this.cmdModify.Text = "   Modify";
             this.cmdModify.UseVisualStyleBackColor = true;
-            this.cmdModify.Click += new System.EventHandler(this.cmdModify_Click_1);
+            this.cmdModify.Click += new System.EventHandler(this.CmdModify_Click_1);
             // 
             // cbAttributes
             // 
@@ -1028,7 +1028,7 @@
             this.cbAttributes.Name = "cbAttributes";
             this.cbAttributes.Size = new System.Drawing.Size(265, 21);
             this.cbAttributes.TabIndex = 33;
-            this.cbAttributes.SelectedIndexChanged += new System.EventHandler(this.cbAttributes_SelectedIndexChanged);
+            this.cbAttributes.SelectedIndexChanged += new System.EventHandler(this.CbAttributes_SelectedIndexChanged);
             // 
             // groupBox2
             // 
@@ -1051,7 +1051,7 @@
             this.cmdSave.TabIndex = 40;
             this.cmdSave.Text = "   Change";
             this.cmdSave.UseVisualStyleBackColor = true;
-            this.cmdSave.Click += new System.EventHandler(this.cmdSave_Click);
+            this.cmdSave.Click += new System.EventHandler(this.CmdSave_Click);
             // 
             // cbMediaType
             // 
@@ -1061,7 +1061,7 @@
             this.cbMediaType.Name = "cbMediaType";
             this.cbMediaType.Size = new System.Drawing.Size(174, 21);
             this.cbMediaType.TabIndex = 38;
-            this.cbMediaType.SelectedIndexChanged += new System.EventHandler(this.cbMediaType_SelectedIndexChanged);
+            this.cbMediaType.SelectedIndexChanged += new System.EventHandler(this.CbMediaType_SelectedIndexChanged);
             // 
             // tabPage3
             // 
@@ -1118,7 +1118,7 @@
             this.cmdCopyResult.Text = "Copy Details to Tags";
             this.cmdCopyResult.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.cmdCopyResult.UseVisualStyleBackColor = true;
-            this.cmdCopyResult.Click += new System.EventHandler(this.cmdCopyResult_Click);
+            this.cmdCopyResult.Click += new System.EventHandler(this.CmdCopyResult_Click);
             // 
             // txtAzDescription
             // 
@@ -1191,8 +1191,8 @@
             this.lbResults.Name = "lbResults";
             this.lbResults.Size = new System.Drawing.Size(445, 134);
             this.lbResults.TabIndex = 4;
-            this.lbResults.SelectedIndexChanged += new System.EventHandler(this.lbResults_SelectedIndexChanged);
-            this.lbResults.DoubleClick += new System.EventHandler(this.lbResults_DoubleClick);
+            this.lbResults.SelectedIndexChanged += new System.EventHandler(this.LbResults_SelectedIndexChanged);
+            this.lbResults.DoubleClick += new System.EventHandler(this.LbResults_DoubleClick);
             // 
             // label28
             // 
@@ -1214,7 +1214,7 @@
             this.cmdSearchTmdb.TabIndex = 2;
             this.cmdSearchTmdb.Text = "   Search TMDB";
             this.cmdSearchTmdb.UseVisualStyleBackColor = true;
-            this.cmdSearchTmdb.Click += new System.EventHandler(this.cmdSearchTmdb_Click);
+            this.cmdSearchTmdb.Click += new System.EventHandler(this.CmdSearchTmdb_Click);
             // 
             // label26
             // 
@@ -1232,7 +1232,7 @@
             this.txtSearchCriteria.Name = "txtSearchCriteria";
             this.txtSearchCriteria.Size = new System.Drawing.Size(357, 20);
             this.txtSearchCriteria.TabIndex = 0;
-            this.txtSearchCriteria.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSearchCriteria_KeyDown);
+            this.txtSearchCriteria.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TxtSearchCriteria_KeyDown);
             // 
             // tabPage2
             // 
@@ -1268,8 +1268,8 @@
             // 
             // backgroundWorker1
             // 
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
-            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
+            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorker1_RunWorkerCompleted);
             // 
             // Form1
             // 

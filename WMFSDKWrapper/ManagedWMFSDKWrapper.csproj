@@ -135,7 +135,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="WMT_ATTR_DATATYPE.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WMT_CODEC_INFO_TYPE.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IWMMetadataEditor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IWMHeaderInfo3.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="WMFSDKFunctions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WMPicture.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

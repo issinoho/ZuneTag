@@ -1,0 +1,7 @@
+root = false
+
+# Every file in this folder carries Microsoft's original sample-code header,
+# not a Drunken Bakery copyright block, so none of them can satisfy the
+# shared stylecop.json file-header template.
+[*.cs]
+dotnet_diagnostic.SA1633.severity = none

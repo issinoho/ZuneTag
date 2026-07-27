@@ -1,4 +1,19 @@
-﻿namespace DrunkenBakery.ZuneTag
+﻿//------------------------------------------------------------------
+// Zune Meta Tag Editor
+// Program Entry Point
+//
+// <copyright file="Program.cs" company="The Drunken Bakery">
+//     Copyright (c) 2009 The Drunken Bakery. All rights reserved.
+// </copyright>
+//
+// Editor to update WMV meta tags for the Zune
+// Application entry point.
+//
+// Author: IRS
+// $Revision: 1.2 $
+//------------------------------------------------------------------
+
+namespace DrunkenBakery.ZuneTag
 {
     using System;
     using System.Windows.Forms;

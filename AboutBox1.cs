@@ -2,7 +2,7 @@
 // Zune Meta Tag Editor
 // About Class
 //
-// <copyright file="TagEditor.cs" company="The Drunken Bakery">
+// <copyright file="AboutBox1.cs" company="The Drunken Bakery">
 //     Copyright (c) 2009 The Drunken Bakery. All rights reserved.
 // </copyright>
 //
@@ -48,20 +48,11 @@ namespace DrunkenBakery.ZuneTag
             // Use Reflection to get a list of depenedent assemblies
             this.textBoxDescription.AppendText(Environment.NewLine + "Dependent Assemblies:");
             var refs = asm.GetReferencedAssemblies();
-            foreach (var myRef in refs) this.textBoxDescription.AppendText(Environment.NewLine + myRef.Name + " v" + myRef.Version);
+            foreach (var myRef in refs)
+            {
+                this.textBoxDescription.AppendText(Environment.NewLine + myRef.Name + " v" + myRef.Version);
+            }
         }
-
-        /// <summary>
-        ///     Handles the Click event of the okButton control.
-        /// </summary>
-        /// <param name="sender">The source of the event.</param>
-        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
-        private void OkButton_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        #region Assembly Attribute Accessors
 
         /// <summary>
         ///     Gets the assembly title.
@@ -81,7 +72,10 @@ namespace DrunkenBakery.ZuneTag
                     var titleAttribute = (AssemblyTitleAttribute)attributes[0];
 
                     // If it is not an empty string, return it
-                    if (titleAttribute.Title != string.Empty) return titleAttribute.Title;
+                    if (titleAttribute.Title != string.Empty)
+                    {
+                        return titleAttribute.Title;
+                    }
                 }
 
                 // If there was no Title attribute, or if the Title attribute was the empty string, return the .exe name
@@ -107,7 +101,10 @@ namespace DrunkenBakery.ZuneTag
                 var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
 
                 // If there aren't any Description attributes, return an empty string
-                if (attributes.Length == 0) return string.Empty;
+                if (attributes.Length == 0)
+                {
+                    return string.Empty;
+                }
 
                 // If there is a Description attribute, return its value
                 return ((AssemblyDescriptionAttribute)attributes[0]).Description;
@@ -126,7 +123,10 @@ namespace DrunkenBakery.ZuneTag
                 var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
 
                 // If there aren't any Product attributes, return an empty string
-                if (attributes.Length == 0) return string.Empty;
+                if (attributes.Length == 0)
+                {
+                    return string.Empty;
+                }
 
                 // If there is a Product attribute, return its value
                 return ((AssemblyProductAttribute)attributes[0]).Product;
@@ -145,7 +145,10 @@ namespace DrunkenBakery.ZuneTag
                 var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
 
                 // If there aren't any Copyright attributes, return an empty string
-                if (attributes.Length == 0) return string.Empty;
+                if (attributes.Length == 0)
+                {
+                    return string.Empty;
+                }
 
                 // If there is a Copyright attribute, return its value
                 return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
@@ -164,13 +167,24 @@ namespace DrunkenBakery.ZuneTag
                 var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
 
                 // If there aren't any Company attributes, return an empty string
-                if (attributes.Length == 0) return string.Empty;
+                if (attributes.Length == 0)
+                {
+                    return string.Empty;
+                }
 
                 // If there is a Company attribute, return its value
                 return ((AssemblyCompanyAttribute)attributes[0]).Company;
             }
         }
 
-        #endregion
+        /// <summary>
+        ///     Handles the Click event of the okButton control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="System.EventArgs" /> instance containing the event data.</param>
+        private void OkButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
