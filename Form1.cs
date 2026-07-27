@@ -968,17 +968,27 @@ namespace DrunkenBakery.ZuneTag
                     return;
                 }
 
-                // Grab still frame, if possible
-                this.AddLogEntry("RegisterNewMediaFileAsync: requesting FFmpeg snapshot.");
-                var conversion = await FFmpeg.Conversions.FromSnippet.Snapshot(input, output, TimeSpan.FromSeconds(1));
-                this.AddLogEntry("RegisterNewMediaFileAsync: starting FFmpeg snapshot conversion.");
-                var result = await conversion.Start();
-                this.AddLogEntry("RegisterNewMediaFileAsync: FFmpeg snapshot conversion complete.");
+                // Grab still frame, if possible. This is independent of the rest of the load
+                // (attributes, saved cover art), so a failure here - e.g. FFmpeg reporting the
+                // conversion complete without actually producing an output file, which happens
+                // for some files - shouldn't prevent the rest of the file from loading.
+                try
+                {
+                    this.AddLogEntry("RegisterNewMediaFileAsync: requesting FFmpeg snapshot.");
+                    var conversion = await FFmpeg.Conversions.FromSnippet.Snapshot(input, output, TimeSpan.FromSeconds(1));
+                    this.AddLogEntry("RegisterNewMediaFileAsync: starting FFmpeg snapshot conversion.");
+                    var result = await conversion.Start();
+                    this.AddLogEntry("RegisterNewMediaFileAsync: FFmpeg snapshot conversion complete.");
 
-                // Load frame into PB
-                var fs = new FileStream(output, FileMode.Open, FileAccess.Read);
-                this.pictureBox1.Image = Image.FromStream(fs);
-                fs.Close();
+                    // Load frame into PB
+                    var fs = new FileStream(output, FileMode.Open, FileAccess.Read);
+                    this.pictureBox1.Image = Image.FromStream(fs);
+                    fs.Close();
+                }
+                catch (Exception e)
+                {
+                    this.AddLogEntry($"RegisterNewMediaFileAsync: thumbnail snapshot failed - {e.Message}", LogType.Fail);
+                }
 
                 // Prefer any cover art already saved in the file over the auto-grabbed frame
                 if (this.TryLoadCoverArt(input, out var coverArt))
