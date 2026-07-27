@@ -14,6 +14,42 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      # Computes the next release version (existing tags are vX.Y.Z; this bumps
+      # the patch number) so the assembly version baked into this build already
+      # matches the tag/release that gets created from its artifact afterwards,
+      # rather than the two drifting apart.
+      - name: Determine next version
+        id: version
+        shell: pwsh
+        run: |
+          git fetch --tags --force
+          $tags = git tag --list 'v*.*.*' |
+            ForEach-Object { $_.Substring(1) } |
+            Where-Object { $_ -match '^\d+\.\d+\.\d+$' } |
+            ForEach-Object { [version]$_ } |
+            Sort-Object
+          if ($tags.Count -eq 0) {
+            $next = [version]"1.1.0"
+          } else {
+            $latest = $tags[-1]
+            $next = [version]::new($latest.Major, $latest.Minor, $latest.Build + 1)
+          }
+          $versionString = "$($next.Major).$($next.Minor).$($next.Build).0"
+          Write-Host "Computed next version: $versionString"
+          echo "version=$versionString" >> $env:GITHUB_OUTPUT
+
+      - name: Set assembly version
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          (Get-Content Properties/AssemblyInfo.cs) `
+            -replace '^\[assembly: AssemblyVersion\("[^"]*"\)\]', "[assembly: AssemblyVersion(`"$version`")]" `
+            -replace '^\[assembly: AssemblyFileVersion\("[^"]*"\)\]', "[assembly: AssemblyFileVersion(`"$version`")]" |
+            Set-Content -Encoding utf8BOM Properties/AssemblyInfo.cs
+          Write-Host "Set assembly version to $version"
 
       - name: Set up MSBuild
         uses: microsoft/setup-msbuild@v3

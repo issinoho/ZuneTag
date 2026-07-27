@@ -46,8 +46,9 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Build and Revision Numbers
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.*")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+// This is a fixed placeholder for local/dev builds. The GitHub Actions release
+// workflow (.github/workflows/build-windows.yml) overwrites both of these with
+// the next release's actual version number before building, so a released
+// ZuneTag.exe's assembly version always matches its GitHub release tag.
+[assembly: AssemblyVersion("1.1.16.0")]
+[assembly: AssemblyFileVersion("1.1.16.0")]
