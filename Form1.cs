@@ -2029,15 +2029,13 @@ namespace DrunkenBakery.ZuneTag
                     // attribute list) and remove any existing WM/Picture entries - including
                     // duplicates left over from earlier saves - before adding the new one, so
                     // this never depends on in-place modification handling a value that has
-                    // grown or shrunk. WM/Picture is a WMT_TYPE_BINARY attribute - the first
-                    // one this app has ever added - and the previous test showed AddAttribute's
-                    // returned index isn't valid under wStreamNum=Stream (65535, the combined
-                    // view every other, scalar-typed attribute is added/read under); it appears
-                    // binary attributes are only visible again under the same specific stream
-                    // number they were added with, NewStream (0), so check/delete/verify all
-                    // use NewStream here instead.
-                    headerInfo3.GetAttributeCountEx(NewStream, out var wAttributeCount);
-                    this.AddLogEntry($"EditPicture: {wAttributeCount} attribute(s) found before edit (stream {NewStream}).");
+                    // grown or shrunk. Stream (65535) is the only stream number ever safely
+                    // used for reads elsewhere in this file - a prior attempt to read/verify
+                    // with NewStream (0) instead crashed file loads entirely elsewhere, so it
+                    // isn't trustworthy for reads here either, even though AddAttribute's own
+                    // writes do use NewStream.
+                    headerInfo3.GetAttributeCountEx(Stream, out var wAttributeCount);
+                    this.AddLogEntry($"EditPicture: {wAttributeCount} attribute(s) found before edit.");
                     var existingIndices = new List<ushort>();
                     for (ushort wAttribIndex = 0; wAttribIndex < wAttributeCount; wAttribIndex++)
                     {
@@ -2046,12 +2044,12 @@ namespace DrunkenBakery.ZuneTag
                         ushort wAttribNameLen = 0;
                         uint dwAttribValueLen = 0;
 
-                        headerInfo3.GetAttributeByIndexEx(NewStream, wAttribIndex, pwszAttribName, ref wAttribNameLen, out var wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
+                        headerInfo3.GetAttributeByIndexEx(Stream, wAttribIndex, pwszAttribName, ref wAttribNameLen, out var wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
 
                         pwszAttribName = new string((char)0, wAttribNameLen);
                         pbAttribValue = new byte[dwAttribValueLen];
 
-                        headerInfo3.GetAttributeByIndexEx(NewStream, wAttribIndex, pwszAttribName, ref wAttribNameLen, out wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
+                        headerInfo3.GetAttributeByIndexEx(Stream, wAttribIndex, pwszAttribName, ref wAttribNameLen, out wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
 
                         if (pwszAttribName.Substring(0, pwszAttribName.Length - 1) == "WM/Picture")
                         {
@@ -2059,12 +2057,12 @@ namespace DrunkenBakery.ZuneTag
                         }
                     }
 
-                    this.AddLogEntry($"EditPicture: found {existingIndices.Count} existing WM/Picture attribute(s) under stream {NewStream}.");
+                    this.AddLogEntry($"EditPicture: found {existingIndices.Count} existing WM/Picture attribute(s).");
 
                     // Delete highest index first so earlier indices stay valid as we go.
                     for (var i = existingIndices.Count - 1; i >= 0; i--)
                     {
-                        var deleteResult = headerInfo3.DeleteAttribute(NewStream, existingIndices[i]);
+                        var deleteResult = headerInfo3.DeleteAttribute(Stream, existingIndices[i]);
                         this.AddLogEntry($"EditPicture: DeleteAttribute({existingIndices[i]}) returned 0x{deleteResult:X8}.");
                     }
 
@@ -2075,13 +2073,13 @@ namespace DrunkenBakery.ZuneTag
                     this.AddLogEntry($"EditPicture: Flush returned 0x{flushResult:X8}.");
 
                     // Re-read what was actually stored, rather than assuming it matches what
-                    // we passed in - under the same stream number it was added with.
+                    // we passed in.
                     ushort verifyNameLen = 0;
                     uint verifyValueLen = 0;
                     string verifyName = null;
                     byte[] verifyValue = null;
-                    headerInfo3.GetAttributeByIndexEx(NewStream, newIndex, verifyName, ref verifyNameLen, out var verifyType, out _, verifyValue, ref verifyValueLen);
-                    this.AddLogEntry($"EditPicture: stored value at index {newIndex} (stream {NewStream}) is {verifyValueLen} bytes ({verifyType}).");
+                    headerInfo3.GetAttributeByIndexEx(Stream, newIndex, verifyName, ref verifyNameLen, out var verifyType, out _, verifyValue, ref verifyValueLen);
+                    this.AddLogEntry($"EditPicture: stored value at index {newIndex} is {verifyValueLen} bytes ({verifyType}).");
                 }
                 finally
                 {
@@ -2209,6 +2207,7 @@ namespace DrunkenBakery.ZuneTag
         /// <param name="pwszFileName">Name of the PWSZ file.</param>
         /// <param name="image">The decoded cover art image, if one was found.</param>
         /// <returns>true if a WM/Picture attribute was found and decoded; otherwise false.</returns>
+        [HandleProcessCorruptedStateExceptions]
         private bool TryLoadCoverArt(string pwszFileName, out Image image)
         {
             image = null;
@@ -2223,56 +2222,49 @@ namespace DrunkenBakery.ZuneTag
                 {
                     var headerInfo3 = (IWMHeaderInfo3)metadataEditor;
 
-                    // WM/Picture is a WMT_TYPE_BINARY attribute and appears to only be visible
-                    // again under the same specific stream number it was added with, unlike
-                    // every scalar-typed attribute (Title, WM/Genre, etc.), which shows up under
-                    // Stream (65535, the combined view) regardless of what stream number it was
-                    // added with. Older files may have a WM/Picture written back when this app
-                    // added it under Stream too, so check both.
-                    foreach (var wStreamNum in new[] { NewStream, Stream })
+                    // Stream (65535, the combined view) is the only stream number this app has
+                    // ever safely used for reads - every attribute enumeration elsewhere in
+                    // this file uses it. A previous attempt to also read with NewStream (0) to
+                    // look for WM/Picture crashed on every file load: reads apparently don't
+                    // tolerate stream 0 the way AddAttribute's writes do, and this method isn't
+                    // wrapped in [HandleProcessCorruptedStateExceptions] (loading a file must
+                    // never risk an uncatchable access violation), so don't try that again here.
+                    headerInfo3.GetAttributeCountEx(Stream, out var wAttributeCount);
+                    this.AddLogEntry($"TryLoadCoverArt: {wAttributeCount} attribute(s) found.");
+
+                    for (ushort wAttribIndex = 0; wAttribIndex < wAttributeCount; wAttribIndex++)
                     {
-                        headerInfo3.GetAttributeCountEx(wStreamNum, out var wAttributeCount);
-                        this.AddLogEntry($"TryLoadCoverArt: {wAttributeCount} attribute(s) found under stream {wStreamNum}.");
+                        string pwszAttribName = null;
+                        byte[] pbAttribValue = null;
+                        ushort wAttribNameLen = 0;
+                        uint dwAttribValueLen = 0;
 
-                        for (ushort wAttribIndex = 0; wAttribIndex < wAttributeCount; wAttribIndex++)
+                        headerInfo3.GetAttributeByIndexEx(Stream, wAttribIndex, pwszAttribName, ref wAttribNameLen, out var wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
+
+                        pwszAttribName = new string((char)0, wAttribNameLen);
+                        pbAttribValue = new byte[dwAttribValueLen];
+
+                        headerInfo3.GetAttributeByIndexEx(Stream, wAttribIndex, pwszAttribName, ref wAttribNameLen, out wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
+
+                        var name = pwszAttribName.Substring(0, pwszAttribName.Length - 1);
+                        this.AddLogEntry($"TryLoadCoverArt: [{wAttribIndex}] {name} ({wAttribType}, {dwAttribValueLen} bytes).");
+
+                        if (wAttribType != WMT_ATTR_DATATYPE.WMT_TYPE_BINARY || name != "WM/Picture")
                         {
-                            string pwszAttribName = null;
-                            byte[] pbAttribValue = null;
-                            ushort wAttribNameLen = 0;
-                            uint dwAttribValueLen = 0;
-
-                            headerInfo3.GetAttributeByIndexEx(wStreamNum, wAttribIndex, pwszAttribName, ref wAttribNameLen, out var wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
-
-                            pwszAttribName = new string((char)0, wAttribNameLen);
-                            pbAttribValue = new byte[dwAttribValueLen];
-
-                            headerInfo3.GetAttributeByIndexEx(wStreamNum, wAttribIndex, pwszAttribName, ref wAttribNameLen, out wAttribType, out _, pbAttribValue, ref dwAttribValueLen);
-
-                            var name = pwszAttribName.Substring(0, pwszAttribName.Length - 1);
-                            this.AddLogEntry($"TryLoadCoverArt: [stream {wStreamNum}][{wAttribIndex}] {name} ({wAttribType}, {dwAttribValueLen} bytes).");
-
-                            if (wAttribType != WMT_ATTR_DATATYPE.WMT_TYPE_BINARY || name != "WM/Picture")
-                            {
-                                continue;
-                            }
-
-                            try
-                            {
-                                image = this.DecodeWmPicture(pbAttribValue);
-                                this.AddLogEntry($"TryLoadCoverArt: decode {(image != null ? "succeeded" : "returned no image")}.");
-                            }
-                            catch (Exception decodeException)
-                            {
-                                this.AddLogEntry($"TryLoadCoverArt: decode failed - {decodeException.Message}", LogType.Fail);
-                            }
-
-                            break;
+                            continue;
                         }
 
-                        if (image != null)
+                        try
                         {
-                            break;
+                            image = this.DecodeWmPicture(pbAttribValue);
+                            this.AddLogEntry($"TryLoadCoverArt: decode {(image != null ? "succeeded" : "returned no image")}.");
                         }
+                        catch (Exception decodeException)
+                        {
+                            this.AddLogEntry($"TryLoadCoverArt: decode failed - {decodeException.Message}", LogType.Fail);
+                        }
+
+                        break;
                     }
                 }
                 finally
