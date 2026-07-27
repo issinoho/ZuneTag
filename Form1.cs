@@ -1951,14 +1951,28 @@ namespace DrunkenBakery.ZuneTag
                 picture.DwDataLen = data.Length;
                 picture.PbData = Marshal.AllocCoTaskMem(picture.DwDataLen);
                 Marshal.Copy(data, 0, picture.PbData, picture.DwDataLen);
-                var pictureParam = Marshal.AllocCoTaskMem(Marshal.SizeOf(picture));
+
+                var structSize = Marshal.SizeOf(picture);
+                var pictureParam = Marshal.AllocCoTaskMem(structSize);
                 Marshal.StructureToPtr(picture, pictureParam, false);
+                var pictureBlob = new byte[structSize];
+                Marshal.Copy(pictureParam, pictureBlob, 0, structSize);
+                Marshal.FreeCoTaskMem(pictureParam);
 
                 WMFSDKFunctions.WMCreateEditor(out var metadataEditor);
                 metadataEditor.Open(this.lblMediaFile.Text);
                 var headerInfo3 = (IWMHeaderInfo3)metadataEditor;
 
-                headerInfo3.SetPicAttribute(0, "WM/Picture", WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, pictureParam, (ushort)Marshal.SizeOf(picture));
+                var existing = this.attributes.FirstOrDefault(a => a.Name == "WM/Picture");
+                if (existing != null)
+                {
+                    headerInfo3.ModifyAttribute(Stream, existing.Index, WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, Language, pictureBlob, (uint)pictureBlob.Length);
+                }
+                else
+                {
+                    headerInfo3.AddAttribute(Stream, "WM/Picture", out _, WMT_ATTR_DATATYPE.WMT_TYPE_BINARY, Language, pictureBlob, (uint)pictureBlob.Length);
+                }
+
                 metadataEditor.Flush();
                 metadataEditor.Close();
             }

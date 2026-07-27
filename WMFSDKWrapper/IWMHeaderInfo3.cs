@@ -11,7 +11,6 @@
 
 namespace WMFSDKWrapper
 {
-    using System;
     using System.Runtime.InteropServices;
 
     [Guid("15CC68E3-27CC-4ecd-B222-3F5D02D80BD5")]
@@ -141,12 +140,5 @@ namespace WMFSDKWrapper
             [In] WMT_CODEC_INFO_TYPE codecType,
             [In] ushort cbCodecInfo,
             [In, MarshalAs(UnmanagedType.LPArray)] byte[] pbCodecInfo);
-
-        uint SetPicAttribute(
-        [In] ushort wStreamNum,
-        [In, MarshalAs(UnmanagedType.LPWStr)] string pszName,
-        [In] WMT_ATTR_DATATYPE type,
-        [In] IntPtr pValue,
-        [In] ushort cbLength);
     }
 }
